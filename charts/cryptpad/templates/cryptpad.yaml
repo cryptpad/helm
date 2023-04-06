@@ -39,17 +39,27 @@ spec:
             - name: http
               containerPort: 3000
               protocol: TCP
-          #livenessProbe:
-          #  httpGet:
-          #    path: /
-          #    port: http
-          #readinessProbe:
-          #  httpGet:
-          #    path: /
-          #    port: http
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
+          {{- if .Values.persistence.enabled }}
+          {{- range $dir, $dirvalues := .Values.persistence.cryptpad }}
+          - name: cryptpad-{{ $dir }}
+            mountPath: /cryptpad/{{ $dir }}
+            {{- if $dirvalues.existingClaim }}
+              persistentVolumeClaim:
+                claimName: {{ tpl $dirvalues.existingClaim $ }}
+            {{- end }}
+          {{- end }}
+          {{- end }}
           - name: configmaps
             mountPath: /cryptpad/config/
       {{- with .Values.nodeSelector }}
@@ -68,3 +78,46 @@ spec:
       - name: configmaps
         configMap:
           name: {{ include "cryptpad-helm.fullname" . }}
+{{- if .Values.persistence.enabled }}
+      {{- range $dir, $dirvalues := .Values.persistence.cryptpad }}
+      {{- if $dirvalues.existingClaim }}
+      - name: cryptpad-{{ $dir }}
+          persistentVolumeClaim:
+            claimName: {{ tpl $dirvalues.existingClaim $ }}
+      {{- end }}
+      {{- end }}
+  volumeClaimTemplates:
+    {{- range $dir, $dirvalues := .Values.persistence.cryptpad }}
+    {{- if not $dirvalues.existingClaim }}
+    - metadata:
+        name: cryptpad-{{ $dir }}
+        {{- with $dirvalues.annotations }}
+        annotations:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- with $dirvalues.labels }}
+        labels:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+      spec:
+        accessModes:
+        {{- range $dirvalues.accessModes }}
+          - {{ . | quote }}
+        {{- end }}
+        {{- if $dirvalues.storageClass }}
+        storageClassName:  {{ $dirvalues.storageClass | quote }}
+        {{- end }}
+        {{- with $dirvalues.dataSource }}
+        dataSource: 
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ $dirvalues.size | quote }}
+        {{- with $dirvalues.selector }}
+        selector: 
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+    {{- end }}
+    {{- end }}
+{{- end }}

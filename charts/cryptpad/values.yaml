@@ -79,3 +79,47 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+persistence:
+  enabled: true
+  cryptpad:
+    blob:
+      existingClaim: ""
+      storageClass: ""
+      accessModes:
+        - ReadWriteOnce
+      size: "100Mi"
+      annotations: {}
+      labels: {}
+      selector: {}
+      dataSource: {}
+    block:
+      existingClaim: ""
+      storageClass: ""
+      accessModes:
+        - ReadWriteOnce
+      size: "100Mi"
+      annotations: {}
+      labels: {}
+      selector: {}
+      dataSource: {}
+    data:
+      existingClaim: ""
+      storageClass: ""
+      accessModes:
+        - ReadWriteOnce
+      size: "100Mi"
+      annotations: {}
+      labels: {}
+      selector: {}
+      dataSource: {}
+    datastore:
+      existingClaim: ""
+      storageClass: ""
+      accessModes:
+        - ReadWriteOnce
+      size: "100Mi"
+      annotations: {}
+      labels: {}
+      selector: {}
+      dataSource: {}
