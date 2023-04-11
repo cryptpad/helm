@@ -11,6 +11,39 @@ image:
   #repository: git.xwikisas.com:5050/xwiki-cloud-infrastructure/docker-images/cryptpad
   #tag: "latest" 
 
+httpUnsafeOrigin: ''
+httpSafeOrigin: ''
+adminKeys: []
+#  - "[cryptpad-user1@my.awesome.website/YZgXQxKR0Rcb6r6CmxHPdAGLVludrAF2lEnkbx1vVOo=]"
+
+#https://docs.cryptpad.org/en/admin_guide/installation.html#admin-cryptpad-config
+config:
+  httpAddress: '0.0.0.0'
+
+  ####################
+  # Database Volumes #
+  ####################
+  filePath: './datastore/'
+  archivePath: './data/archive'
+  pinPath: './data/pins'
+  taskPath: './data/tasks'
+  blockPath: './block'
+  blobPath: './blob'
+  blobStagingPath: './data/blobstage'
+  decreePath: './data/decrees'
+  logPath: './data/logs'
+
+  #############
+  # Debugging #
+  #############
+  verbose: false
+  logToStdout: false
+  logLevel: 'info'
+  logFeedback: false
+
+  # Surplus information
+  installMethod: 'helm-docker'
+
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""

@@ -8,8 +8,8 @@ This is initial version of Cryptpad chart helm [Helm Chart](https://helm.sh/) fo
 
 ## Roadmap
 
-* Provide all configs.js (ie storage, adminKeys, other custom configs) to be made using helm/yaml values. 
-* Create Storage options and/or kind (Deployment/StatefulSet)
+* [Testing] Provide all configs.js (ie storage, adminKeys, other custom configs) to be made using helm/yaml values. 
+* [Testing] Create Storage options and/or kind (Deployment/StatefulSet)
 * Custom configs/mappings (customize) and customs configs apps.  
 * Continue to use image from (promasu/cryptpad) ? 
 * Review checkup since some returns seams to be ok but are failing on checking
