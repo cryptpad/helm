@@ -16,6 +16,18 @@ httpSafeOrigin: ''
 adminKeys: []
 #  - "[cryptpad-user1@my.awesome.website/YZgXQxKR0Rcb6r6CmxHPdAGLVludrAF2lEnkbx1vVOo=]"
 
+#https://docs.cryptpad.org/en/admin_guide/customization.html#application-config
+application_config:
+  # Check all the configurable values: https://github.com/xwiki-labs/cryptpad/blob/main/www/common/application_config_internal.js
+  #availableLanguages: [ 'en', 'fr', 'de' ]
+  #privacy: |
+  #  {
+  #    "default": 'https://example.com/privacy.html',
+  #    "en": 'https://example.com/privacy.en.html', // in case English is not your default language
+  #    "fr": 'https://example.com/privacy.fr.html', // another language
+  #    "de": 'https://example.com/privacy.de.html', // you get the idea?
+  #  }
+
 #https://docs.cryptpad.org/en/admin_guide/installation.html#admin-cryptpad-config
 config:
   httpAddress: '0.0.0.0'

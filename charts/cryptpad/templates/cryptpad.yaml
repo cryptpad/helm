@@ -61,7 +61,11 @@ spec:
           {{- end }}
           {{- end }}
           - name: configmaps
-            mountPath: /cryptpad/config/
+            mountPath: /cryptpad/config/config.js
+            subPath: config.js
+          - name: configmaps
+            mountPath: /cryptpad/customize/application_config.js
+            subPath: application_config.js
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
