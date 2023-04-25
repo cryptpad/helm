@@ -60,3 +60,29 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Define main domain. Or use first ingress host defined as main domain. 
+*/}}
+{{- define "cryptpad-helm.mainDomain" -}}
+{{- if .Values.config.httpUnsafeOrigin }}  
+{{- .Values.config.httpUnsafeOrigin }}
+{{- else if .Values.ingress.enabled }}
+https://{{ (index .Values.ingress.hosts 0).host }}
+{{- else }}
+http://localhost:3000
+{{- end}}
+{{- end }}
+
+{{/*
+Define sandbox subdomain. Or use first ingress host defined as main domain. 
+*/}}
+{{- define "cryptpad-helm.sandboxDomain" -}}
+{{- if .Values.config.httpSafeOrigin }}  
+{{- .Values.config.httpSafeOrigin }}
+{{- else if .Values.ingress.enabled }}
+https://{{ (index .Values.ingress.hosts 0).host }}
+{{- else }}
+http://localhost:3000
+{{- end}}
+{{- end }}

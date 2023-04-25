@@ -35,6 +35,47 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+          - name: CPAD_MAIN_DOMAIN       
+            value: "{{ include "cryptpad-helm.mainDomain" . }}"
+          - name: CPAD_SANDBOX_DOMAIN
+            value: "{{ include "cryptpad-helm.sandboxDomain" . }}"
+          {{- if .Values.apiDomain }}
+          - name: CPAD_API_DOMAIN
+            value:  "{{ .Values.apiDomain }}"
+          {{- end }}
+          {{- if .Values.filesDomain }}
+          - name: CPAD_FILES_DOMAIN
+            value:  "{{ .Values.filesDomain }}"
+          {{- end }}
+          {{- if .Values.trustedProxy }}
+          - name: CPAD_TRUSTED_PROXY
+            value:  "{{ .Values.trustedProxy }}"
+          {{- end }}
+          {{- if .Values.realIpHeader }}
+          - name: CPAD_REALIP_HEADER
+            value:  "{{ .Values.realIpHeader }}"
+          {{- end }}
+          {{- if .Values.realIpRecursive }}
+          - name: CPAD_REALIP_RECURSIVE
+            value: "{{ .Values.realIpRecursive }}"
+          {{- end }}
+          {{- if .Values.tlsCert }}
+          - name: CPAD_TLS_CERT
+            value:  "{{ .Values.tlsCert }}"
+          {{- end }}
+          {{- if .Values.tlsKey }}
+          - name: CPAD_TLS_KEY
+            value:  "{{ .Values.tlsKey }}"
+          {{- end }}
+          {{- if .Values.tlsDhParam }}
+          - name: CPAD_TLS_DHPARAM
+            value:  "{{ .Values.tlsDhParam }}"
+          {{- end }}
+          {{- if .Values.http2Disable }}
+          - name: CPAD_HTTP2_DISABLE
+            value:  "{{ .Values.http2Disable }}"
+          {{- end }}
           ports:
             - name: http
               containerPort: 3000

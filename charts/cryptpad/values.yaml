@@ -56,6 +56,18 @@ config:
   # Surplus information
   installMethod: 'helm-docker'
 
+# Check values on https://github.com/xwiki-labs/cryptpad-docker#environment-variables
+# For CPAD_MAIN_DOMAIN and CPAD_SANDBOX_DOMAIN values httpUnsafeOrigin and httpSafeOrigin will be used. 
+apiDomain: ""
+filesDomain: ""
+trustedProxy: ""
+realIpHeader: ""
+realIpRecursive: ""
+tlsCert: ""
+tlsKey: ""
+tlsDhParam: ""
+http2Disable: ""
+
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
