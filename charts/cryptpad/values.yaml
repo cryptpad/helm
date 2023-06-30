@@ -28,6 +28,8 @@ application_config:
   #    "de": 'https://example.com/privacy.de.html', // you get the idea?
   #  }
 
+cpadConfig: "/cryptpad/config/config.js" 
+
 #https://docs.cryptpad.org/en/admin_guide/installation.html#admin-cryptpad-config
 config:
   httpAddress: '0.0.0.0'
