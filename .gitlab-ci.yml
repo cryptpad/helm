@@ -1,5 +1,0 @@
-
-include:
-  - project: ci/resources
-    ref: master
-    file: /Helm.gitlab-ci.yml
