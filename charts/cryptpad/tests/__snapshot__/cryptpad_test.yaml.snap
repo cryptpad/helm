@@ -1,0 +1,96 @@
+should have the good values:
+  1: |
+    replicas: 1
+    selector:
+      matchLabels:
+        app.kubernetes.io/instance: RELEASE-NAME
+        app.kubernetes.io/name: cryptpad
+    serviceName: RELEASE-NAME-cryptpad
+    template:
+      metadata:
+        annotations:
+          checksum/configmap: f13c7ac75ec491580a208cc2022f19acd7a4c7cfc9975de513337768fa7c52ea
+        labels:
+          app.kubernetes.io/instance: RELEASE-NAME
+          app.kubernetes.io/name: cryptpad
+      spec:
+        containers:
+          - env:
+              - name: CPAD_MAIN_DOMAIN
+                value: localhost:3001
+              - name: CPAD_SANDBOX_DOMAIN
+                value: https://example.com
+              - name: CPAD_CONF
+                value: /cryptpad/config/config.js
+            image: cryptpad/cryptpad:version-5.4.0
+            imagePullPolicy: IfNotPresent
+            livenessProbe:
+              httpGet:
+                path: /
+                port: http
+            name: cryptpad
+            ports:
+              - containerPort: 3000
+                name: http
+                protocol: TCP
+            readinessProbe:
+              httpGet:
+                path: /
+                port: http
+            resources: {}
+            securityContext: {}
+            volumeMounts:
+              - mountPath: /cryptpad/blob
+                name: cryptpad-blob
+              - mountPath: /cryptpad/block
+                name: cryptpad-block
+              - mountPath: /cryptpad/data
+                name: cryptpad-data
+              - mountPath: /cryptpad/datastore
+                name: cryptpad-datastore
+              - mountPath: /cryptpad/config/config.js
+                name: configmaps
+                subPath: config.js
+              - mountPath: /cryptpad/customize/application_config.js
+                name: configmaps
+                subPath: application_config.js
+        securityContext:
+          fsGroup: 4001
+        serviceAccountName: RELEASE-NAME-cryptpad
+        volumes:
+          - configMap:
+              name: RELEASE-NAME-cryptpad
+            name: configmaps
+    volumeClaimTemplates:
+      - metadata:
+          name: cryptpad-blob
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 100Mi
+      - metadata:
+          name: cryptpad-block
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 100Mi
+      - metadata:
+          name: cryptpad-data
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 100Mi
+      - metadata:
+          name: cryptpad-datastore
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 100Mi

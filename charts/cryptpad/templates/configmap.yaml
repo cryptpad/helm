@@ -9,31 +9,38 @@ data:
     /* globals module */
 
     module.exports = {
-          {{- if .Values.config.httpUnsafeOrigin }}  
-            httpUnsafeOrigin: {{ .Values.config.httpUnsafeOrigin }}, 
-          {{- else if .Values.ingress.enabled }}
+          {{- if .Values.ingress.enabled}}  
             httpUnsafeOrigin: 'https://{{ (index .Values.ingress.hosts 0).host }}',
+          {{- else if .Values.config.httpUnsafeOrigin }}
+            httpUnsafeOrigin: {{ .Values.config.httpUnsafeOrigin | quote }}, 
           {{- else }}
             httpUnsafeOrigin: 'http://localhost:3000',
           {{- end}}
        
-          {{- if .Values.config.httpSafeOrigin }}  
-            httpSafeOrigin: {{ .Values.config.httpSafeOrigin }}, 
-          {{- else if .Values.ingress.enabled }}
+          {{- if .Values.ingress.enabled }}
             httpSafeOrigin: 'https://{{ (index .Values.ingress.hosts 0).host }}',
+          {{- else if .Values.config.httpSafeOrigin }}  
+            httpSafeOrigin: {{ .Values.config.httpSafeOrigin | quote }}, 
           {{- else }}
             httpSafeOrigin: 'http://localhost:3000',
           {{- end}}
 
+          {{- if .Values.config.adminKeys }}
             adminKeys: [
-              {{- range $key := .Values.adminKeys }}
+              {{- range $key := .Values.config.adminKeys }}
                 {{ $key | quote }}, 
               {{- end }}
-            ], 
+            ],
+          {{- else}}
+            adminKeys: [],
+          {{- end}}
 
           {{- range $key, $value := .Values.config }}
-            {{ $key }}:  {{ $value | quote }}, 
+            {{- if and (or (ne $key "httpUnsafeOrigin") (ne $key "httpSafeOrigin")) (ne $key "adminKeys") }}
+              {{ $key }}: {{ $value | quote }},
+            {{- end }}
           {{- end }}
+
 
         };
   application_config.js: |

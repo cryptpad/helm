@@ -1,0 +1,13 @@
+should set values properly:
+  1: |
+    rules:
+      - host: localhost
+        http:
+          paths:
+            - backend:
+                service:
+                  name: release-cryptpad
+                  port:
+                    number: null
+              path: /
+              pathType: ImplementationSpecific
