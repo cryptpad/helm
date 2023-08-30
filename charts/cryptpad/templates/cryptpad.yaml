@@ -1,5 +1,10 @@
-apiVersion: apps/v1
+{{- if .Values.workloadStateful }}
+apiVersion: {{ include "common.capabilities.statefulset.apiVersion" . }}
 kind: StatefulSet
+{{- else }}
+apiVersion: {{ include "common.capabilities.deployment.apiVersion" . }}
+kind: Deployment
+{{- end }}
 metadata:
   name: {{ include "cryptpad-helm.fullname" . }}
   labels:
@@ -8,7 +13,9 @@ spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
+  {{- if .Values.workloadStateful }}
   serviceName: {{ include "cryptpad-helm.fullname" . }}
+  {{- end }}
   selector:
     matchLabels:
       {{- include "cryptpad-helm.selectorLabels" . | nindent 6 }}
@@ -125,12 +132,12 @@ spec:
       - name: configmaps
         configMap:
           name: {{ include "cryptpad-helm.fullname" . }}
-{{- if .Values.persistence.enabled }}
+{{- if and .Values.persistence.enabled .Values.workloadStateful}}
       {{- range $dir, $dirvalues := .Values.persistence.cryptpad }}
       {{- if $dirvalues.existingClaim }}
       - name: cryptpad-{{ $dir }}
           persistentVolumeClaim:
-            claimName: {{ tpl $dirvalues.existingClaim $ }}
+            claimName: cryptpad-{{ $dir }}
       {{- end }}
       {{- end }}
   volumeClaimTemplates:
@@ -167,4 +174,11 @@ spec:
         {{- end }}
     {{- end }}
     {{- end }}
+{{- end }}
+{{- if and .Values.persistence.enabled (not .Values.workloadStateful) }}
+  {{- range $dir, $dirvalues := .Values.persistence.cryptpad }}
+      - name: cryptpad-{{ $dir }}
+        persistentVolumeClaim:
+          claimName: cryptpad-{{ $dir }}
+  {{- end }}
 {{- end }}

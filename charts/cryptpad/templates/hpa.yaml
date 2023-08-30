@@ -7,8 +7,13 @@ metadata:
     {{- include "cryptpad-helm.labels" . | nindent 4 }}
 spec:
   scaleTargetRef:
-    apiVersion: apps/v1
+    {{- if .Values.workloadStateful }}
+    apiVersion: {{ include "common.capabilities.statefulset.apiVersion" . }}
+    kind: StatefulSet
+    {{- else }}
+    apiVersion: {{ include "common.capabilities.deployment.apiVersion" . }}
     kind: Deployment
+    {{- end }}
     name: {{ include "cryptpad-helm.fullname" . }}
   minReplicas: {{ .Values.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.autoscaling.maxReplicas }}

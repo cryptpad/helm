@@ -9,7 +9,7 @@ should have the good values:
     template:
       metadata:
         annotations:
-          checksum/configmap: f13c7ac75ec491580a208cc2022f19acd7a4c7cfc9975de513337768fa7c52ea
+          checksum/configmap: 38d81b3173b48e6dc06bf3e3adcd1f7d12421c902cbdf6788988af085f7c46c3
         labels:
           app.kubernetes.io/instance: RELEASE-NAME
           app.kubernetes.io/name: cryptpad
@@ -94,3 +94,77 @@ should have the good values:
           resources:
             requests:
               storage: 100Mi
+test the Deployement:
+  1: |
+    replicas: 1
+    selector:
+      matchLabels:
+        app.kubernetes.io/instance: RELEASE-NAME
+        app.kubernetes.io/name: cryptpad
+    template:
+      metadata:
+        annotations:
+          checksum/configmap: 254d2439b04537a9dc2bbc898e298f62a09f425539eb067d7521443f958d9bf6
+        labels:
+          app.kubernetes.io/instance: RELEASE-NAME
+          app.kubernetes.io/name: cryptpad
+      spec:
+        containers:
+          - env:
+              - name: CPAD_MAIN_DOMAIN
+                value: http://localhost:3000
+              - name: CPAD_SANDBOX_DOMAIN
+                value: http://localhost:3000
+              - name: CPAD_CONF
+                value: /cryptpad/config/config.js
+            image: cryptpad/cryptpad:version-5.4.0
+            imagePullPolicy: IfNotPresent
+            livenessProbe:
+              httpGet:
+                path: /
+                port: http
+            name: cryptpad
+            ports:
+              - containerPort: 3000
+                name: http
+                protocol: TCP
+            readinessProbe:
+              httpGet:
+                path: /
+                port: http
+            resources: {}
+            securityContext: {}
+            volumeMounts:
+              - mountPath: /cryptpad/blob
+                name: cryptpad-blob
+              - mountPath: /cryptpad/block
+                name: cryptpad-block
+              - mountPath: /cryptpad/data
+                name: cryptpad-data
+              - mountPath: /cryptpad/datastore
+                name: cryptpad-datastore
+              - mountPath: /cryptpad/config/config.js
+                name: configmaps
+                subPath: config.js
+              - mountPath: /cryptpad/customize/application_config.js
+                name: configmaps
+                subPath: application_config.js
+        securityContext:
+          fsGroup: 4001
+        serviceAccountName: RELEASE-NAME-cryptpad
+        volumes:
+          - configMap:
+              name: RELEASE-NAME-cryptpad
+            name: configmaps
+          - name: cryptpad-blob
+            persistentVolumeClaim:
+              claimName: cryptpad-blob
+          - name: cryptpad-block
+            persistentVolumeClaim:
+              claimName: cryptpad-block
+          - name: cryptpad-data
+            persistentVolumeClaim:
+              claimName: cryptpad-data
+          - name: cryptpad-datastore
+            persistentVolumeClaim:
+              claimName: cryptpad-datastore

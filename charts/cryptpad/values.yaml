@@ -4,6 +4,9 @@
 
 replicaCount: 1
 
+# Enable to choose witch kind of workload will be used: (true) StatefulSet or (false) for Deployment
+workloadStateful: true
+
 image:
   pullPolicy: IfNotPresent
   repository: cryptpad/cryptpad
@@ -60,9 +63,10 @@ config:
 
   # Administrator keys
   # https://docs.cryptpad.org/en/admin_guide/installation.html#configure-administrators
-  adminKeys: [
-    "[cryptpad-user1@my.awesome.website/YZgXQxKR0Rcb6r6CmxHPdAGLVludrAF2lEnkbx1vVOo=]",
-  ]
+  adminKeys: []
+  # adminKeys: [
+  #   "[cryptpad-user1@my.awesome.website/YZgXQxKR0Rcb6r6CmxHPdAGLVludrAF2lEnkbx1vVOo=]",
+  # ]
 
 # Check values on https://github.com/xwiki-labs/cryptpad-docker#environment-variables
 # For CPAD_MAIN_DOMAIN and CPAD_SANDBOX_DOMAIN values httpUnsafeOrigin and httpSafeOrigin will be used.
@@ -146,7 +150,7 @@ autoscaling:
   minReplicas: 1
   maxReplicas: 100
   targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
 
 nodeSelector: {}
 
