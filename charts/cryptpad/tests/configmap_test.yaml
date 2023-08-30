@@ -1,0 +1,57 @@
+suite: test configmap
+templates: 
+- configmap.yaml
+tests:
+  - it: should declare module and exports in config
+    asserts:
+      - matchRegex:
+          path: data["config.js"]
+          pattern: globals module \*\/
+      - matchRegex:
+          path: data["config.js"]
+          pattern: module\.exports = {
+  - it: should contains value specified in config
+    set:
+      config:
+        filePath: 'files'
+        archivePath: '"archives"'
+        pinPath: '"pins"'
+    asserts: 
+      - matchRegex:
+          path: data["config.js"]
+          pattern: 'filePath: "files"'
+      - matchRegex:
+          path: data["config.js"]
+          pattern: 'filePath: "files"'
+      - matchRegex:
+          path: data["config.js"]
+          pattern: 'filePath: "files"'
+  - it: should define properly the AdminKeys and http values
+    set:
+      config:
+        httpSafeOrigin: "https://example.com"
+        httpUnsafeOrigin: "http://localhost:8080"
+        adminKeys: [
+          "[cryptpad-user1@my.awesome.website/YZgXQxKR0Rcb6r6CmxHPdAGLVludrAF2lEnkbx1vVOo=]",
+        ]
+    asserts:
+      - matchRegex:
+          path: data["config.js"]
+          pattern: 'httpSafeOrigin: "https:\/\/example\.com"'
+      - matchRegex:
+          path: data["config.js"]
+          pattern: 'httpUnsafeOrigin: "http:\/\/localhost:8080"'
+  - it: should contains basic keywords in Application config
+    asserts:
+      - matchRegex:
+          path: data["application_config.js"]
+          pattern: define\(\['/common/application_config_internal.js'\], function \(AppConfig\) {
+  - it: should contains custom keys in Application config
+    set:
+      application_config:
+        availableLanguages: [ 'en', 'fr', 'de' ]
+    asserts:
+      - matchRegex:
+          path: data["application_config.js"]
+          pattern: AppConfig.availableLanguages =  \["en","fr","de"\];
+

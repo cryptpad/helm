@@ -1,0 +1,21 @@
+suite: test cryptpad
+templates:
+  - cryptpad.yaml
+  - configmap.yaml
+tests:
+  - it: should have the good values
+    set:
+      cryptpad: 
+        replicaCount: 3
+      autoscaling:
+        enabled: false
+      config:
+        httpSafeOrigin: "https://example.com"
+        httpUnsafeOrigin: "localhost:3001"
+    asserts:
+      - isKind:
+          of: StatefulSet
+        template: cryptpad.yaml
+      - matchSnapshot:
+          path: spec
+        template: cryptpad.yaml

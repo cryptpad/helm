@@ -6,21 +6,16 @@ replicaCount: 1
 
 image:
   pullPolicy: IfNotPresent
-  repository: promasu/cryptpad
-  tag: "alpine"
-  #repository: git.xwikisas.com:5050/xwiki-cloud-infrastructure/docker-images/cryptpad
-  #tag: "latest" 
+  repository: cryptpad/cryptpad
+  tag: "version-5.4.0"
+  # repository: git.xwikisas.com:5050/xwiki-cloud-infrastructure/docker-images/cryptpad
+  # tag: "latest"
 
-httpUnsafeOrigin: ''
-httpSafeOrigin: ''
-adminKeys: []
-#  - "[cryptpad-user1@my.awesome.website/YZgXQxKR0Rcb6r6CmxHPdAGLVludrAF2lEnkbx1vVOo=]"
-
-#https://docs.cryptpad.org/en/admin_guide/customization.html#application-config
+# https://docs.cryptpad.org/en/admin_guide/customization.html#application-config
 application_config:
   # Check all the configurable values: https://github.com/xwiki-labs/cryptpad/blob/main/www/common/application_config_internal.js
-  #availableLanguages: [ 'en', 'fr', 'de' ]
-  #privacy: |
+  # availableLanguages: [ 'en', 'fr', 'de' ]
+  # privacy: |
   #  {
   #    "default": 'https://example.com/privacy.html',
   #    "en": 'https://example.com/privacy.en.html', // in case English is not your default language
@@ -28,11 +23,16 @@ application_config:
   #    "de": 'https://example.com/privacy.de.html', // you get the idea?
   #  }
 
-cpadConfig: "/cryptpad/config/config.js" 
+cpadConfig: "/cryptpad/config/config.js"
 
-#https://docs.cryptpad.org/en/admin_guide/installation.html#admin-cryptpad-config
+# https://docs.cryptpad.org/en/admin_guide/installation.html#admin-cryptpad-config
 config:
+  #########################
+  # NETWORK CONFIGURATION #
+  #########################
   httpAddress: '0.0.0.0'
+  httpSafeOrigin: 'http://localhost:3000'
+  httpUnsafeOrigin: 'http://localhost:3000'
 
   ####################
   # Database Volumes #
@@ -58,8 +58,14 @@ config:
   # Surplus information
   installMethod: 'helm-docker'
 
+  # Administrator keys
+  # https://docs.cryptpad.org/en/admin_guide/installation.html#configure-administrators
+  adminKeys: [
+    "[cryptpad-user1@my.awesome.website/YZgXQxKR0Rcb6r6CmxHPdAGLVludrAF2lEnkbx1vVOo=]",
+  ]
+
 # Check values on https://github.com/xwiki-labs/cryptpad-docker#environment-variables
-# For CPAD_MAIN_DOMAIN and CPAD_SANDBOX_DOMAIN values httpUnsafeOrigin and httpSafeOrigin will be used. 
+# For CPAD_MAIN_DOMAIN and CPAD_SANDBOX_DOMAIN values httpUnsafeOrigin and httpSafeOrigin will be used.
 apiDomain: ""
 filesDomain: ""
 trustedProxy: ""
@@ -85,7 +91,7 @@ serviceAccount:
 
 podAnnotations: {}
 
-podSecurityContext: 
+podSecurityContext:
   fsGroup: 4001
 
 securityContext: {}
@@ -97,8 +103,17 @@ securityContext: {}
   # runAsUser: 1000
 
 service:
+  portName: node
+  name: http
   type: ClusterIP
-  port: 80
+  externalPort: 80
+  internalPort: 8080
+  # Set an array of externalIPs for the service
+  externalIPs: []
+    # - 10.20.30.40
+    # - 10.20.30.41
+  # Reference: https://kubernetes.io/docs/reference/networking/virtual-ips/#session-affinity
+  sessionAffinity: ClientIP
 
 ingress:
   enabled: false

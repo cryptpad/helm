@@ -6,10 +6,17 @@ metadata:
     {{- include "cryptpad-helm.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
+  {{- if gt (len .Values.service.externalIPs) 0 }}
+  externalIPs:
+    {{- range .Values.service.externalIPs }}
+    - {{ . }}
+    {{- end }}
+  {{- end }}
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
-      protocol: TCP
-      name: http
+  - port: {{ .Values.service.externalPort }}
+    targetPort: {{ .Values.service.internalPort }}
+    protocol: TCP
+    name: {{ .Values.service.name }}
+  sessionAffinity: {{ .Values.service.sessionAffinity }}
   selector:
     {{- include "cryptpad-helm.selectorLabels" . | nindent 4 }}

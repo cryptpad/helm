@@ -1,0 +1,28 @@
+suite: test hpa
+templates:
+  - hpa.yaml
+tests:
+  - it: should fill the values 
+    set:
+      autoscaling:
+        enabled: true
+        minReplicas: 1
+        maxReplicas: 100
+        targetCPUUtilizationPercentage: 80
+        targetMemoryUtilizationPercentage: 75
+    asserts:
+      - isKind:
+          of: HorizontalPodAutoscaler
+      - equal:
+          path: spec.minReplicas
+          value: 1
+      - equal:
+          path: spec.maxReplicas
+          value: 100
+      - equal:
+          path: spec.metrics[0].resource.targetAverageUtilization
+          value: 80
+      - equal:
+          path: spec.metrics[1].resource.targetAverageUtilization
+          value: 75
+          

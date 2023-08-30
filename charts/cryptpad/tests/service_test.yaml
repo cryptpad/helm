@@ -1,0 +1,31 @@
+suite: test service
+templates:
+  - service.yaml
+tests:
+  - it: should set values properly
+    set:
+      service.type: ClusterIP
+      service.name: tcp
+    release:
+      name: release
+    asserts:
+      - isKind:
+          of: Service
+#        template: service.yaml
+      - matchSnapshot:
+          path: spec
+#        template: service.yaml
+  - it: should have same labels as Deployment
+    set:
+      service.type: ClusterIP
+      service.externalPort: 81
+      service.internalPort: 8081
+      service.name: tcp
+    release:
+      name: release
+    asserts:
+      - equal:
+          path: spec.selector
+          value:
+           app.kubernetes.io/instance: release
+           app.kubernetes.io/name: cryptpad
