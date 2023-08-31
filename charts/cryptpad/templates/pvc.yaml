@@ -1,0 +1,35 @@
+{{- if and .Values.persistence.enabled (not .Values.workloadStateful) }}
+{{- range $dir, $dirvalues := .Values.persistence.cryptpad }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: cryptpad-{{ $dir }}
+  {{- with $dirvalues.annotations }}
+  annotations:
+    {{- toYaml . | nindent 10 }}
+  {{- end }}
+  {{- with $dirvalues.labels }}
+  labels:
+    {{- toYaml . | nindent 10 }}
+  {{- end }}
+spec:
+  accessModes:
+  {{- range $dirvalues.accessModes }}
+    - {{ . | quote }}
+  {{- end }}
+  {{- if $dirvalues.storageClass }}
+  storageClassName:  {{ $dirvalues.storageClass | quote }}
+  {{- end }}
+  {{- with $dirvalues.dataSource }}
+  dataSource: 
+    {{- toYaml . | nindent 10 }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ $dirvalues.size | quote }}
+  {{- with $dirvalues.selector }}
+  selector: 
+    {{- toYaml . | nindent 10 }}
+  {{- end }}
+  {{- end }}
+{{- end }}

@@ -23,7 +23,9 @@ jobs:
         uses: azure/setup-helm@v3
 
       - name: Add repos
-        run: helm plugin install https://github.com/helm-unittest/helm-unittest
+        run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm plugin install https://github.com/helm-unittest/helm-unittest
 
       - name: Set up Python
         uses: actions/setup-python@v4.7.0

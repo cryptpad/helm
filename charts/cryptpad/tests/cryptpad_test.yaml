@@ -19,3 +19,13 @@ tests:
       - matchSnapshot:
           path: spec
         template: cryptpad.yaml
+  - it: test the Deployement
+    set:
+      workloadStateful: false
+    asserts:
+      - isKind:
+          of: Deployment
+        template: cryptpad.yaml
+      - matchSnapshot:
+          path: spec
+        template: cryptpad.yaml
