@@ -9,7 +9,7 @@ This is initial version of [Cryptpad](https://docs.cryptpad.org/en/index.html) c
 ## Usage
 
 ```bash
-helm repo add cryptpad-github https://git.xwikisas.com/api/v4/projects/439/packages/helm/main
+helm repo add cryptpad-github https://cryptpad.github.io/helm
 helm install cryptpad cryptpad-github/cryptpad 
 ```
 
