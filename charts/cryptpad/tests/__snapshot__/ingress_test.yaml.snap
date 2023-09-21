@@ -8,6 +8,6 @@ should set values properly:
                 service:
                   name: release-cryptpad
                   port:
-                    number: null
+                    number: 80
               path: /
               pathType: ImplementationSpecific
