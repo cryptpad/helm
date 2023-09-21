@@ -9,7 +9,7 @@ should have the good values:
     template:
       metadata:
         annotations:
-          checksum/configmap: 38d81b3173b48e6dc06bf3e3adcd1f7d12421c902cbdf6788988af085f7c46c3
+          checksum/configmap: 7f12c69a85e00a68018c28e6f43360a33e83154c2514cabd6b74717f4e39d2f6
         labels:
           app.kubernetes.io/instance: RELEASE-NAME
           app.kubernetes.io/name: cryptpad
@@ -104,7 +104,7 @@ test the Deployement:
     template:
       metadata:
         annotations:
-          checksum/configmap: 254d2439b04537a9dc2bbc898e298f62a09f425539eb067d7521443f958d9bf6
+          checksum/configmap: e192714dcc548f362062499d614aabd7d1772047e21c9eab8c09b027d2770f13
         labels:
           app.kubernetes.io/instance: RELEASE-NAME
           app.kubernetes.io/name: cryptpad
