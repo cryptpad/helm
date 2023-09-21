@@ -1,7 +1,7 @@
 suite: test cryptpad
 templates:
-  - cryptpad.yaml
-  - configmap.yaml
+  - templates/cryptpad.yaml
+  - templates/configmap.yaml
 tests:
   - it: should have the good values
     set:
@@ -15,17 +15,17 @@ tests:
     asserts:
       - isKind:
           of: StatefulSet
-        template: cryptpad.yaml
+        template: templates/cryptpad.yaml
       - matchSnapshot:
           path: spec
-        template: cryptpad.yaml
+        template: templates/cryptpad.yaml
   - it: test the Deployement
     set:
       workloadStateful: false
     asserts:
       - isKind:
           of: Deployment
-        template: cryptpad.yaml
+        template: templates/cryptpad.yaml
       - matchSnapshot:
           path: spec
-        template: cryptpad.yaml
+        template: templates/cryptpad.yaml
