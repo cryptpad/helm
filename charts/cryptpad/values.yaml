@@ -34,8 +34,6 @@ config:
   # NETWORK CONFIGURATION #
   #########################
   httpAddress: '0.0.0.0'
-  httpSafeOrigin: 'http://localhost:3000'
-  httpUnsafeOrigin: 'http://localhost:3000'
 
   ####################
   # Database Volumes #
@@ -111,7 +109,7 @@ service:
   name: http
   type: ClusterIP
   externalPort: 80
-  internalPort: 8080
+  internalPort: http
   # Set an array of externalIPs for the service
   externalIPs: []
     # - 10.20.30.40
