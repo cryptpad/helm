@@ -1,6 +1,6 @@
 # CryptPad Helm Chart
 
-This is initial version of [Cryptpad](https://docs.cryptpad.org/en/index.html) chart helm [Helm Chart](https://helm.sh/) for ease deployment on Kubernetes. 
+This is the [CryptPad](https://cryptpad.org) [Helm Chart](https://helm.sh/) for easy deployment on Kubernetes. 
 
 ## Requirements
 
