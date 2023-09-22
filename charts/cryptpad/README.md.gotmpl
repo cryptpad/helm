@@ -1,0 +1,72 @@
+{{ template "chart.header" . }}
+{{ template "chart.description" . }}
+
+{{ template "chart.versionBadge" . }}{{ template "chart.typeBadge" . }}{{ template "chart.appVersionBadge" . }}
+
+## Installing the Chart
+
+Install the Helm Chart using:
+
+```console
+helm repo add cryptpad-github https://cryptpad.github.io/helm
+helm install cryptpad cryptpad-github/cryptpad 
+```
+
+### Configure and Customization 
+
+Values example of how customize your intance: 
+
+```yaml
+# https://docs.cryptpad.org/en/admin_guide/installation.html#configure-cryptpad
+config:
+  adminKeys: [
+    "[cryptpad-user1@my.awesome.website/YZgXQxKR0Rcb6r6CmxHPdAGLVludrAF2lEnkbx1vVOo=]",
+  ]
+
+# https://docs.cryptpad.org/en/admin_guide/customization.html#application-config
+application_config:
+  availableLanguages: [ 'en', 'de', 'fr', 'pt-br' ]
+  availablePadTypes: [ 'drive', 'teams', 'sheet', 'doc', 'presentation', 'pad', 'kanban', 'code', 'form', 'poll', 'whiteboard',
+                                'file', 'contacts', 'slide', 'convert', 'diagram' ]
+  privacy: |
+    {
+      "default": 'https://example.com/privacy.html',
+      "en": 'https://example.com/privacy.en.html', // in case English is not your default language
+      "de": 'https://example.com/privacy.de.html', // you get the idea?
+    }
+```
+
+{{ template "chart.requirementsSection" . }}
+
+{{ template "chart.valuesSection" . }}
+
+## Backup 
+
+Important volumes or paths (in case different solution like empty/sidecar backup tools) to be considered: 
+
+* **cryptpad-blob** volume, or **/cryptpad/blob**
+* **cryptpad-block** volume, or **/cryptpad/block**
+* **cryptpad-data** volume, or **/cryptpad/data**
+* **cryptpad-datastore** volume, or **/cryptpad/datastore**
+
+And configuration file or command line with preferences used to install Helm release. 
+
+There are some tools that can manage the backups on k8s workloads. We can suggest [Velero](https://velero.io/), as we already used on some internal clusters.
+
+There is specific product documentation on: https://docs.cryptpad.org/en/admin_guide/maintenance.html#backup-and-migration
+
+## Logging
+
+Current logging resources are standard [Kubernetes logging](https://kubernetes.io/docs/concepts/cluster-administration/logging/). 
+
+Example of how change log levels from instance:  
+
+```yaml
+config:
+  verbose: false
+  logToStdout: false
+  logLevel: 'info'
+  logFeedback: false
+```
+
+{{ template "helm-docs.versionFooter" . }} 

@@ -1,0 +1,27 @@
+name: Generate Helm documentation
+
+on: 
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/**'
+      - 'charts/**'
+
+permissions:
+  contents: write
+
+jobs:
+  update-chart-metadata:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: gabe565/setup-helm-docs-action@v1
+      - run: helm-docs
+      - name: Commit documentation
+        run: |
+          git config --global user.name '$GITHUB_ACTOR'
+          git config --global user.email '$GITHUB_ACTOR@users.noreply.github.com'
+          git add .
+          git commit -sm "docs: generate chart documentation"
+          git push
