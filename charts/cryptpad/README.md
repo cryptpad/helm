@@ -1,6 +1,6 @@
 # cryptpad
 
-![Version: 0.0.8](https://img.shields.io/badge/Version-0.0.8-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.0.9](https://img.shields.io/badge/Version-0.0.9-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 CryptPad is a collaboration suite that is end-to-end-encrypted and open-source.
 
@@ -80,7 +80,7 @@ CryptPad is a collaboration suite that is end-to-end-encrypted and open-source.
 | realIpHeader | string | `""` | Header to get client IP from (`X-Real-IP` or `X-Forwarded-For`) |
 | realIpRecursive | string | `""` | Instruct Nginx to perform a recursive search to find client's real IP (`on`/`off`) (see [ngx_http_realip_module](https://nginx.org/en/docs/http/ngx_http_realip_module.html)) |
 | replicaCount | int | `1` | Number of replicas |
-| resources | object | `{}` | Specify default resources We usually recommend not to specify default resources and to leave this as a conscious choice for the user. This also increases chances charts run on environments with little resources, such as Minikube.  |
+| resources | object | `{}` | Specify default resources. We usually recommend not to specify default resources and to leave this as a conscious choice for the user. This also increases chances charts run on environments with little resources, such as Minikube. |
 | securityContext | object | `{}` | Security context |
 | service | object | `{"externalIPs":[],"externalPort":80,"internalPort":"http","name":"http","portName":"node","sessionAffinity":"ClientIP","type":"ClusterIP"}` | Values for the service |
 | serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
