@@ -8,7 +8,7 @@ replicaCount: 1
 # -- Enable to choose witch kind of workload will be used: (true) StatefulSet or (false) for Deployment
 workloadStateful: true
 
-# -- Parameters for the Cryptpad image used
+# Parameters for the Cryptpad image used
 image:
   pullPolicy: IfNotPresent
   repository: cryptpad/cryptpad
@@ -32,32 +32,46 @@ application_config:
 cpadConfig: "/cryptpad/config/config.js"
 
 # https://docs.cryptpad.org/en/admin_guide/installation.html#admin-cryptpad-config
-# -- [Configuration of Cryptpad](https://docs.cryptpad.org/en/admin_guide/installation.html#admin-cryptpad-config)
+# [Configuration of Cryptpad](https://docs.cryptpad.org/en/admin_guide/installation.html#admin-cryptpad-config)
 config:
   #########################
   # NETWORK CONFIGURATION #
   #########################
+  # -- httpAddress specifies the address on which the nodejs server should be accessible.
   httpAddress: '0.0.0.0'
 
   ####################
   # Database Volumes #
   ####################
+  # -- Directory where files/documents should be stored. 
   filePath: './datastore/'
+  # -- Directory to archive data for a configurable period before deleting it. 
   archivePath: './data/archive'
+  # -- Directory to store documents that was pinned to to be stored by the server indefinitely. 
   pinPath: './data/pins'
+  # -- Directory to store a list of scheduled tasks. 
   taskPath: './data/tasks'
+  # -- Directory to store authenticated blocks. 
   blockPath: './block'
+  # -- Directory to store encrypted files that was uploaded. 
   blobPath: './blob'
+  # -- Directory to store incomplete blobs in a 'staging' area until they are fully uploaded. 
   blobStagingPath: './data/blobstage'
+  # -- TODO
   decreePath: './data/decrees'
+  # -- Directory to store logging events. 
   logPath: './data/logs'
 
   #############
   # Debugging #
   #############
+  # -- Enable verbose logging
   verbose: false
+  # -- Log activity to stdout, this may be useful for debugging
   logToStdout: false
+  # -- Change log level from this list below by order of importance: (silly, verbose, debug, feedback, info, warn, error). 
   logLevel: 'info'
+  # -- Enable feedback log, but requires feedback on log level to work. 
   logFeedback: false
 
   # Surplus information
@@ -65,30 +79,41 @@ config:
 
   # Administrator keys
   # https://docs.cryptpad.org/en/admin_guide/installation.html#configure-administrators
+  # -- Public signing key of users to give admin panel access
   adminKeys: []
   # adminKeys: [
   #   "[cryptpad-user1@my.awesome.website/YZgXQxKR0Rcb6r6CmxHPdAGLVludrAF2lEnkbx1vVOo=]",
   # ]
 
+# TODO: remove 
 # Check values on https://github.com/xwiki-labs/cryptpad-docker#environment-variables
 # For CPAD_MAIN_DOMAIN and CPAD_SANDBOX_DOMAIN values httpUnsafeOrigin and httpSafeOrigin will be used.
-# -- CryptPad API subdomain FQDN
+# CryptPad API subdomain FQDN
+# @ignore
 apiDomain: ""
-# -- CryptPad files subdomain FQDN
+# CryptPad files subdomain FQDN
+# @ignore
 filesDomain: ""
-# -- Trusted proxy address or CIDR
+# Trusted proxy address or CIDR
+# @ignore
 trustedProxy: ""
-# -- Header to get client IP from (`X-Real-IP` or `X-Forwarded-For`)
+# Header to get client IP from (`X-Real-IP` or `X-Forwarded-For`)
+# @ignore
 realIpHeader: ""
-# -- Instruct Nginx to perform a recursive search to find client's real IP (`on`/`off`) (see [ngx_http_realip_module](https://nginx.org/en/docs/http/ngx_http_realip_module.html))
+# Instruct Nginx to perform a recursive search to find client's real IP (`on`/`off`) (see [ngx_http_realip_module](https://nginx.org/en/docs/http/ngx_http_realip_module.html))
+# @ignore
 realIpRecursive: ""
-# -- Path to TLS certificate file
+# Path to TLS certificate file
+# @ignore
 tlsCert: ""
-# -- Path to TLS private key file
+# Path to TLS private key file
+# @ignore
 tlsKey: ""
-# -- Path to Diffie-Hellman parameters file
+# Path to Diffie-Hellman parameters file
+# @ignore
 tlsDhParam: ""
-# -- Disable HTTP2
+# Disable HTTP2
+# @ignore
 http2Disable: ""
 
 imagePullSecrets: []
@@ -120,7 +145,7 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-# -- Values for the service
+# Values for the service
 service:
   portName: node
   name: http
@@ -134,9 +159,9 @@ service:
   # Reference: https://kubernetes.io/docs/reference/networking/virtual-ips/#session-affinity
   sessionAffinity: ClientIP
 
-# -- Values for the ingress
+# Values for the ingress
 ingress:
-  # -- Enable the ingress
+  # Enable the ingress
   enabled: false
   className: ""
   annotations: {}
