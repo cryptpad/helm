@@ -53,7 +53,7 @@
 <!-- About the Project -->
 ## :star2: About the Project
 
-This is the [CryptPad](https://cryptpad.org) [Helm Chart](https://helm.sh/) for easy deployment on Kubernetes. 
+This is the [Helm Chart](https://helm.sh/) for easy deployment of [CryptPad](https://cryptpad.org) on Kubernetes. 
 
 <!-- Getting Started -->
 ## :toolbox: Getting Started
