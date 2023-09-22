@@ -2,11 +2,13 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+# -- Number of replicas
 replicaCount: 1
 
-# Enable to choose witch kind of workload will be used: (true) StatefulSet or (false) for Deployment
+# -- Enable to choose witch kind of workload will be used: (true) StatefulSet or (false) for Deployment
 workloadStateful: true
 
+# -- Parameters for the Cryptpad image used
 image:
   pullPolicy: IfNotPresent
   repository: cryptpad/cryptpad
@@ -14,7 +16,7 @@ image:
   # repository: git.xwikisas.com:5050/xwiki-cloud-infrastructure/docker-images/cryptpad
   # tag: "latest"
 
-# https://docs.cryptpad.org/en/admin_guide/customization.html#application-config
+# -- Configuration of the [application](https://docs.cryptpad.org/en/admin_guide/customization.html#application-config)
 application_config:
   # Check all the configurable values: https://github.com/xwiki-labs/cryptpad/blob/main/www/common/application_config_internal.js
   # availableLanguages: [ 'en', 'fr', 'de' ]
@@ -26,9 +28,11 @@ application_config:
   #    "de": 'https://example.com/privacy.de.html', // you get the idea?
   #  }
 
+# -- File to mount for the CPAD Configuration (`CPAD_CONF`)
 cpadConfig: "/cryptpad/config/config.js"
 
 # https://docs.cryptpad.org/en/admin_guide/installation.html#admin-cryptpad-config
+# -- [Configuration of Cryptpad](https://docs.cryptpad.org/en/admin_guide/installation.html#admin-cryptpad-config)
 config:
   #########################
   # NETWORK CONFIGURATION #
@@ -68,14 +72,23 @@ config:
 
 # Check values on https://github.com/xwiki-labs/cryptpad-docker#environment-variables
 # For CPAD_MAIN_DOMAIN and CPAD_SANDBOX_DOMAIN values httpUnsafeOrigin and httpSafeOrigin will be used.
+# -- CryptPad API subdomain FQDN
 apiDomain: ""
+# -- CryptPad files subdomain FQDN
 filesDomain: ""
+# -- Trusted proxy address or CIDR
 trustedProxy: ""
+# -- Header to get client IP from (`X-Real-IP` or `X-Forwarded-For`)
 realIpHeader: ""
+# -- Instruct Nginx to perform a recursive search to find client's real IP (`on`/`off`) (see [ngx_http_realip_module](https://nginx.org/en/docs/http/ngx_http_realip_module.html))
 realIpRecursive: ""
+# -- Path to TLS certificate file
 tlsCert: ""
+# -- Path to TLS private key file
 tlsKey: ""
+# -- Path to Diffie-Hellman parameters file
 tlsDhParam: ""
+# -- Disable HTTP2
 http2Disable: ""
 
 imagePullSecrets: []
@@ -83,19 +96,22 @@ nameOverride: ""
 fullnameOverride: ""
 
 serviceAccount:
-  # Specifies whether a service account should be created
+  # -- Specifies whether a service account should be created
   create: true
-  # Annotations to add to the service account
+  # -- Annotations to add to the service account
   annotations: {}
-  # The name of the service account to use.
+  # -- The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
+# -- Annotations for the Pod
 podAnnotations: {}
 
+# -- Security context for the Pod
 podSecurityContext:
   fsGroup: 4001
 
+# -- Security context
 securityContext: {}
   # capabilities:
   #   drop:
@@ -104,6 +120,7 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
+# -- Values for the service
 service:
   portName: node
   name: http
@@ -117,7 +134,9 @@ service:
   # Reference: https://kubernetes.io/docs/reference/networking/virtual-ips/#session-affinity
   sessionAffinity: ClientIP
 
+# -- Values for the ingress
 ingress:
+  # -- Enable the ingress
   enabled: false
   className: ""
   annotations: {}
@@ -131,10 +150,12 @@ ingress:
   tls: []
   #  - secretName: secret-tls
 
+# -- Specify default resources.
+# We usually recommend not to specify default resources and to leave this as a conscious
+# choice for the user. This also increases chances charts run on environments with little
+# resources, such as Minikube.
 resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # If you do want to specify resources, uncomment the following
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
   # limits:
   #   cpu: 100m
@@ -144,19 +165,28 @@ resources: {}
   #   memory: 128Mi
 
 autoscaling:
+  # -- Enable the Autoscaling
   enabled: false
+  # -- Minimal numbers of replicas
   minReplicas: 1
+  # -- Maximum numbers of replicas
   maxReplicas: 100
+  # -- Percentage of the targeted CPU Utilization
   targetCPUUtilizationPercentage: 80
+  # -- Percentage of the targeted Memory Utilization
   targetMemoryUtilizationPercentage: 80
 
+# -- Values for the Node Selector
 nodeSelector: {}
 
+# -- Values for the Tolerations
 tolerations: []
 
+# -- Values for the Affinity
 affinity: {}
 
 persistence:
+  # -- Enable the persistence
   enabled: true
   cryptpad:
     blob:

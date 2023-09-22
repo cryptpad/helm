@@ -4,7 +4,7 @@
   <h1>CryptPad Helm Chart</h1>
   
   <p>
-    This is the [CryptPad](https://cryptpad.org) [Helm Chart](https://helm.sh/) for easy deployment on Kubernetes. 
+    This is the <a href="https://cryptpad.org">Cryptpad</a> <a href="https://helm.sh/">Helm Chart</a> for easy deployment on Kubernetes.
   </p>
   
   
