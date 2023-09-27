@@ -2,7 +2,7 @@
 
 CryptPad is a collaboration office suite that is end-to-end-encrypted and open-source.
 
-![Version: 0.0.9](https://img.shields.io/badge/Version-0.0.9-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.0.10](https://img.shields.io/badge/Version-0.0.10-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 ## Installing the Chart
 
@@ -71,6 +71,7 @@ application_config:
 | config.taskPath | string | `"./data/tasks"` | Directory to store a list of scheduled tasks.  |
 | config.verbose | bool | `false` | Enable verbose logging |
 | cpadConfig | string | `"/cryptpad/config/config.js"` | File to mount for the CPAD Configuration (`CPAD_CONF`) |
+| enableEmbedding | bool | `false` | Allow documents and media be embedded on other websites. This will add an "Embed" option on the Share menu.  |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"IfNotPresent"` |  |
 | image.repository | string | `"cryptpad/cryptpad"` |  |
