@@ -36,6 +36,32 @@ spec:
       serviceAccountName: {{ include "cryptpad-helm.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+      - name: init-{{ .Chart.Name }}
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 12 }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command: ['/bin/sh', '-c']
+        volumeMounts:
+          - name: cryptpad-data
+            mountPath: /cryptpad/data
+            {{- if .Values.persistence.cryptpad.data.existingClaim }}
+              persistentVolumeClaim:
+                claimName: {{ tpl .Values.persistence.cryptpad.data.existingClaim $ }}
+            {{- end }}
+        args:
+        - |
+          FILE=/cryptpad/data/decrees/decree.ndjson
+          mkdir -p /cryptpad/data/decrees
+          VALUE='["ENABLE_EMBEDDING", [{{ .Values.enableEmbedding }}], "", 0]'
+          if  [ -f $FILE ] && [ $(grep -c "ENABLE_EMBEDDING" $FILE) -gt 0 ]
+          then
+            sed -i "s|.*ENABLE_EMBEDDING.*|$VALUE|g" "$FILE"
+          else           
+            echo "$VALUE" >> "$FILE"
+          fi
+
       containers:
         - name: {{ .Chart.Name }}
           securityContext:

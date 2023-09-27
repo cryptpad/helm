@@ -85,6 +85,9 @@ config:
   #   "[cryptpad-user1@my.awesome.website/YZgXQxKR0Rcb6r6CmxHPdAGLVludrAF2lEnkbx1vVOo=]",
   # ]
 
+# -- Allow documents and media be embedded on other websites. This will add an "Embed" option on the Share menu. 
+enableEmbedding: false 
+
 # TODO: remove 
 # Check values on https://github.com/xwiki-labs/cryptpad-docker#environment-variables
 # For CPAD_MAIN_DOMAIN and CPAD_SANDBOX_DOMAIN values httpUnsafeOrigin and httpSafeOrigin will be used.
@@ -254,3 +257,4 @@ persistence:
       labels: {}
       selector: {}
       dataSource: {}
+
