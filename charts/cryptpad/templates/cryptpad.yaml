@@ -112,8 +112,11 @@ spec:
             value:  "{{ .Values.http2Disable }}"
           {{- end }}
           ports:
-            - name: http
-              containerPort: 3000
+            - name: {{ .Values.service.internalPort }}
+              containerPort: {{ .Values.service.containerPort }}
+              protocol: TCP
+            - name: {{ .Values.service.websocket.internalPort }}
+              containerPort: {{ .Values.service.websocket.containerPort }}
               protocol: TCP
           livenessProbe:
             httpGet:

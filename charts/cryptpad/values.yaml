@@ -12,7 +12,7 @@ workloadStateful: true
 image:
   pullPolicy: IfNotPresent
   repository: cryptpad/cryptpad
-  tag: "version-5.4.0"
+  tag: "version-5.5.0"
   # repository: git.xwikisas.com:5050/xwiki-cloud-infrastructure/docker-images/cryptpad
   # tag: "latest"
 
@@ -155,6 +155,11 @@ service:
   type: ClusterIP
   externalPort: 80
   internalPort: http
+  containerPort: 3000
+  websocket:
+    externalPort: 83
+    internalPort: ws
+    containerPort: 3003
   # Set an array of externalIPs for the service
   externalIPs: []
     # - 10.20.30.40
@@ -172,9 +177,6 @@ ingress:
     # kubernetes.io/tls-acme: "true"
   hosts:
     - host: localhost
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
   tls: []
   #  - secretName: secret-tls
 

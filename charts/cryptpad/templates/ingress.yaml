@@ -1,6 +1,7 @@
 {{- if .Values.ingress.enabled -}}
 {{- $fullName := include "cryptpad-helm.fullname" . -}}
 {{- $svcPort := .Values.service.externalPort -}}
+{{- $svcWsPort := .Values.service.websocket.externalPort -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -30,14 +31,19 @@ spec:
     - host: {{ .host | quote }}
       http:
         paths:
-          {{- range .paths }}
-          - path: {{ .path }}
-            pathType: {{ .pathType }}
+          - path: /
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: {{ $fullName }}
                 port:
                   number: {{ $svcPort }}
-          {{- end }}
+          - path: /cryptpad_websocket
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: {{ $svcWsPort }}
     {{- end }}
 {{- end }}
