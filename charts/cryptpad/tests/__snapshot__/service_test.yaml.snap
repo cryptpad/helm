@@ -5,6 +5,10 @@ should set values properly:
         port: 80
         protocol: TCP
         targetPort: http
+      - name: ws
+        port: 83
+        protocol: TCP
+        targetPort: ws
     selector:
       app.kubernetes.io/instance: release
       app.kubernetes.io/name: cryptpad

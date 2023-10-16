@@ -25,3 +25,5 @@ jobs:
           git add .
           git commit -sm "docs: generate chart documentation"
           git push
+        env:
+          GITHUB_ACTOR: ${{ vars.GITHUB_ACTOR }}

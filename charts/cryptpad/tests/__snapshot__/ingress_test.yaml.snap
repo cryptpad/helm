@@ -11,3 +11,10 @@ should set values properly:
                     number: 80
               path: /
               pathType: ImplementationSpecific
+            - backend:
+                service:
+                  name: release-cryptpad
+                  port:
+                    number: 83
+              path: /cryptpad_websocket
+              pathType: ImplementationSpecific
