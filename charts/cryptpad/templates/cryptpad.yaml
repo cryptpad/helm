@@ -102,6 +102,11 @@ spec:
                 claimName: {{ tpl $dirvalues.existingClaim $ }}
             {{- end }}
           {{- end }}
+          {{- else if not .Values.workloadStateful }}
+          {{- range $dir, $dirvalues := .Values.persistence.cryptpad }}
+          - name: cryptpad-{{ $dir }}
+            mountPath: /cryptpad/{{ $dir }}
+          {{- end }}
           {{- end }}
           - name: configmaps
             mountPath: {{ .Values.cpadConfig }}
