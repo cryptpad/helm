@@ -88,37 +88,6 @@ config:
 # -- Allow documents and media be embedded on other websites. This will add an "Embed" option on the Share menu. 
 enableEmbedding: false 
 
-# TODO: remove 
-# Check values on https://github.com/xwiki-labs/cryptpad-docker#environment-variables
-# For CPAD_MAIN_DOMAIN and CPAD_SANDBOX_DOMAIN values httpUnsafeOrigin and httpSafeOrigin will be used.
-# CryptPad API subdomain FQDN
-# @ignore
-apiDomain: ""
-# CryptPad files subdomain FQDN
-# @ignore
-filesDomain: ""
-# Trusted proxy address or CIDR
-# @ignore
-trustedProxy: ""
-# Header to get client IP from (`X-Real-IP` or `X-Forwarded-For`)
-# @ignore
-realIpHeader: ""
-# Instruct Nginx to perform a recursive search to find client's real IP (`on`/`off`) (see [ngx_http_realip_module](https://nginx.org/en/docs/http/ngx_http_realip_module.html))
-# @ignore
-realIpRecursive: ""
-# Path to TLS certificate file
-# @ignore
-tlsCert: ""
-# Path to TLS private key file
-# @ignore
-tlsKey: ""
-# Path to Diffie-Hellman parameters file
-# @ignore
-tlsDhParam: ""
-# Disable HTTP2
-# @ignore
-http2Disable: ""
-
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""

@@ -75,42 +75,6 @@ spec:
             value: "{{ include "cryptpad-helm.sandboxDomain" . }}"
           - name: CPAD_CONF
             value: "{{ .Values.cpadConfig }}"
-          {{- if .Values.apiDomain }}
-          - name: CPAD_API_DOMAIN
-            value:  "{{ .Values.apiDomain }}"
-          {{- end }}
-          {{- if .Values.filesDomain }}
-          - name: CPAD_FILES_DOMAIN
-            value:  "{{ .Values.filesDomain }}"
-          {{- end }}
-          {{- if .Values.trustedProxy }}
-          - name: CPAD_TRUSTED_PROXY
-            value:  "{{ .Values.trustedProxy }}"
-          {{- end }}
-          {{- if .Values.realIpHeader }}
-          - name: CPAD_REALIP_HEADER
-            value:  "{{ .Values.realIpHeader }}"
-          {{- end }}
-          {{- if .Values.realIpRecursive }}
-          - name: CPAD_REALIP_RECURSIVE
-            value: "{{ .Values.realIpRecursive }}"
-          {{- end }}
-          {{- if .Values.tlsCert }}
-          - name: CPAD_TLS_CERT
-            value:  "{{ .Values.tlsCert }}"
-          {{- end }}
-          {{- if .Values.tlsKey }}
-          - name: CPAD_TLS_KEY
-            value:  "{{ .Values.tlsKey }}"
-          {{- end }}
-          {{- if .Values.tlsDhParam }}
-          - name: CPAD_TLS_DHPARAM
-            value:  "{{ .Values.tlsDhParam }}"
-          {{- end }}
-          {{- if .Values.http2Disable }}
-          - name: CPAD_HTTP2_DISABLE
-            value:  "{{ .Values.http2Disable }}"
-          {{- end }}
           ports:
             - name: {{ .Values.service.internalPort }}
               containerPort: {{ .Values.service.containerPort }}
