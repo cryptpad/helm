@@ -40,6 +40,16 @@ config:
   # -- httpAddress specifies the address on which the nodejs server should be accessible.
   httpAddress: '0.0.0.0'
 
+  # if you do not enable the ingress, set this to your URL
+  # otherwise the hostname from the ingress will be used
+  # -- URL to reach your cryptpad
+  # httpUnsafeOrigin: 'https://cryptpad.example.org'
+
+  # if you do not enable the ingress, set this to your URL
+  # otherwise the hostname from the ingress will be used
+  # -- URL to reach your cryptpad
+  # httpSafeOrigin: 'https://cryptpad.example.org'
+
   ####################
   # Database Volumes #
   ####################
