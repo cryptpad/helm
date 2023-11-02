@@ -155,6 +155,7 @@ ingress:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
+    # if the ingress is enabled, this hostname will be used for httpUnsafeOrigin and httpSafeOrigin
     - host: localhost
   tls: []
   #  - secretName: secret-tls
