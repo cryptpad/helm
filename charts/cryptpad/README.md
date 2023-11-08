@@ -55,23 +55,23 @@ application_config:
 | autoscaling.targetCPUUtilizationPercentage | int | `80` | Percentage of the targeted CPU Utilization |
 | autoscaling.targetMemoryUtilizationPercentage | int | `80` | Percentage of the targeted Memory Utilization |
 | config.adminKeys | list | `[]` | Public signing key of users to give admin panel access |
-| config.archivePath | string | `"./data/archive"` | Directory to archive data for a configurable period before deleting it.  |
-| config.blobPath | string | `"./blob"` | Directory to store encrypted files that was uploaded.  |
-| config.blobStagingPath | string | `"./data/blobstage"` | Directory to store incomplete blobs in a 'staging' area until they are fully uploaded.  |
-| config.blockPath | string | `"./block"` | Directory to store authenticated blocks.  |
+| config.archivePath | string | `"./data/archive"` | Directory to archive data for a configurable period before deleting it. |
+| config.blobPath | string | `"./blob"` | Directory to store encrypted files that was uploaded. |
+| config.blobStagingPath | string | `"./data/blobstage"` | Directory to store incomplete blobs in a 'staging' area until they are fully uploaded. |
+| config.blockPath | string | `"./block"` | Directory to store authenticated blocks. |
 | config.decreePath | string | `"./data/decrees"` | TODO |
-| config.filePath | string | `"./datastore/"` | Directory where files/documents should be stored.  |
+| config.filePath | string | `"./datastore/"` | Directory where files/documents should be stored. |
 | config.httpAddress | string | `"0.0.0.0"` | httpAddress specifies the address on which the nodejs server should be accessible. |
 | config.installMethod | string | `"helm-docker"` |  |
-| config.logFeedback | bool | `false` | Enable feedback log, but requires feedback on log level to work.  |
-| config.logLevel | string | `"info"` | Change log level from this list below by order of importance: (silly, verbose, debug, feedback, info, warn, error).  |
-| config.logPath | string | `"./data/logs"` | Directory to store logging events.  |
+| config.logFeedback | bool | `false` | Enable feedback log, but requires feedback on log level to work. |
+| config.logLevel | string | `"info"` | Change log level from this list below by order of importance: (silly, verbose, debug, feedback, info, warn, error). |
+| config.logPath | string | `"./data/logs"` | Directory to store logging events. |
 | config.logToStdout | bool | `false` | Log activity to stdout, this may be useful for debugging |
-| config.pinPath | string | `"./data/pins"` | Directory to store documents that was pinned to to be stored by the server indefinitely.  |
-| config.taskPath | string | `"./data/tasks"` | Directory to store a list of scheduled tasks.  |
+| config.pinPath | string | `"./data/pins"` | Directory to store documents that was pinned to to be stored by the server indefinitely. |
+| config.taskPath | string | `"./data/tasks"` | Directory to store a list of scheduled tasks. |
 | config.verbose | bool | `false` | Enable verbose logging |
 | cpadConfig | string | `"/cryptpad/config/config.js"` | File to mount for the CPAD Configuration (`CPAD_CONF`) |
-| enableEmbedding | bool | `false` | Allow documents and media be embedded on other websites. This will add an "Embed" option on the Share menu.  |
+| enableEmbedding | bool | `false` | Allow documents and media be embedded on other websites. This will add an "Embed" option on the Share menu. |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"IfNotPresent"` |  |
 | image.repository | string | `"cryptpad/cryptpad"` |  |
