@@ -40,26 +40,36 @@ config:
   # -- httpAddress specifies the address on which the nodejs server should be accessible.
   httpAddress: '0.0.0.0'
 
+  # if you do not enable the ingress, set this to your URL
+  # otherwise the hostname from the ingress will be used
+  # -- URL to reach your cryptpad
+  # httpUnsafeOrigin: 'https://cryptpad.example.org'
+
+  # if you do not enable the ingress, set this to your URL
+  # otherwise the hostname from the ingress will be used
+  # -- URL to reach your cryptpad
+  # httpSafeOrigin: 'https://cryptpad.example.org'
+
   ####################
   # Database Volumes #
   ####################
-  # -- Directory where files/documents should be stored. 
+  # -- Directory where files/documents should be stored.
   filePath: './datastore/'
-  # -- Directory to archive data for a configurable period before deleting it. 
+  # -- Directory to archive data for a configurable period before deleting it.
   archivePath: './data/archive'
-  # -- Directory to store documents that was pinned to to be stored by the server indefinitely. 
+  # -- Directory to store documents that was pinned to to be stored by the server indefinitely.
   pinPath: './data/pins'
-  # -- Directory to store a list of scheduled tasks. 
+  # -- Directory to store a list of scheduled tasks.
   taskPath: './data/tasks'
-  # -- Directory to store authenticated blocks. 
+  # -- Directory to store authenticated blocks.
   blockPath: './block'
-  # -- Directory to store encrypted files that was uploaded. 
+  # -- Directory to store encrypted files that was uploaded.
   blobPath: './blob'
-  # -- Directory to store incomplete blobs in a 'staging' area until they are fully uploaded. 
+  # -- Directory to store incomplete blobs in a 'staging' area until they are fully uploaded.
   blobStagingPath: './data/blobstage'
   # -- TODO
   decreePath: './data/decrees'
-  # -- Directory to store logging events. 
+  # -- Directory to store logging events.
   logPath: './data/logs'
 
   #############
@@ -69,9 +79,9 @@ config:
   verbose: false
   # -- Log activity to stdout, this may be useful for debugging
   logToStdout: false
-  # -- Change log level from this list below by order of importance: (silly, verbose, debug, feedback, info, warn, error). 
+  # -- Change log level from this list below by order of importance: (silly, verbose, debug, feedback, info, warn, error).
   logLevel: 'info'
-  # -- Enable feedback log, but requires feedback on log level to work. 
+  # -- Enable feedback log, but requires feedback on log level to work.
   logFeedback: false
 
   # Surplus information
@@ -85,8 +95,8 @@ config:
   #   "[cryptpad-user1@my.awesome.website/YZgXQxKR0Rcb6r6CmxHPdAGLVludrAF2lEnkbx1vVOo=]",
   # ]
 
-# -- Allow documents and media be embedded on other websites. This will add an "Embed" option on the Share menu. 
-enableEmbedding: false 
+# -- Allow documents and media be embedded on other websites. This will add an "Embed" option on the Share menu.
+enableEmbedding: false
 
 imagePullSecrets: []
 nameOverride: ""
@@ -145,6 +155,7 @@ ingress:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
+    # if the ingress is enabled, this hostname will be used for httpUnsafeOrigin and httpSafeOrigin
     - host: localhost
   tls: []
   #  - secretName: secret-tls
