@@ -2,7 +2,7 @@
 
 CryptPad is a collaboration office suite that is end-to-end-encrypted and open-source.
 
-![Version: 0.0.13](https://img.shields.io/badge/Version-0.0.13-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.0.14](https://img.shields.io/badge/Version-0.0.14-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 ## Installing the Chart
 
@@ -119,6 +119,30 @@ application_config:
 | persistence.enabled | bool | `true` | Enable the persistence |
 | podAnnotations | object | `{}` | Annotations for the Pod |
 | podSecurityContext | object | `{"fsGroup":4001}` | Security context for the Pod |
+| probes.liveness.enabled | bool | `true` | Enable liveness probe |
+| probes.liveness.failureThreshold | int | `5` | Failure threshold for liveness probe  |
+| probes.liveness.httpGet.enabled | bool | `true` | If enabled uses httpGet to check, if false uses tcpSocket checking.  |
+| probes.liveness.httpGet.path | string | `"/"` | Path to be tested with HTTP GET request |
+| probes.liveness.initialDelaySeconds | int | `0` | Initial delay seconds for liveness probe |
+| probes.liveness.periodSeconds | int | `10` | Period seconds for liveness probe |
+| probes.liveness.successThreshold | int | `1` | Success threshold for liveness probe |
+| probes.liveness.timeoutSeconds | int | `1` | Timeout seconds for liveness probe |
+| probes.readiness.enabled | bool | `true` | Enable readiness probe |
+| probes.readiness.failureThreshold | int | `5` | Failure threshold for readiness probe  |
+| probes.readiness.httpGet.enabled | bool | `true` | If enabled uses httpGet to check, if false uses tcpSocket checking.  |
+| probes.readiness.httpGet.path | string | `"/"` | Path to be tested with HTTP GET request |
+| probes.readiness.initialDelaySeconds | int | `0` | Initial delay seconds for readiness probe |
+| probes.readiness.periodSeconds | int | `10` | Period seconds for readiness probe |
+| probes.readiness.successThreshold | int | `1` | Success threshold for readiness probe |
+| probes.readiness.timeoutSeconds | int | `1` | Timeout seconds for readiness probe |
+| probes.startup.enabled | bool | `true` | Enable startup probe |
+| probes.startup.failureThreshold | int | `5` | Failure threshold for startup probe  |
+| probes.startup.httpGet.enabled | bool | `false` | If enabled uses httpGet to check, if false uses tcpSocket checking.  |
+| probes.startup.httpGet.path | string | `"/"` | Path to be tested with HTTP GET request |
+| probes.startup.initialDelaySeconds | int | `0` | Initial delay seconds for startup probe |
+| probes.startup.periodSeconds | int | `10` | Period seconds for startup probe |
+| probes.startup.successThreshold | int | `1` | Success threshold for startup probe |
+| probes.startup.timeoutSeconds | int | `1` | Timeout seconds for startup probe |
 | replicaCount | int | `1` | Number of replicas |
 | resources | object | `{}` | Specify default resources. We usually recommend not to specify default resources and to leave this as a conscious choice for the user. This also increases chances charts run on environments with little resources, such as Minikube. |
 | securityContext | object | `{}` | Security context |

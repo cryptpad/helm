@@ -82,14 +82,54 @@ spec:
             - name: {{ .Values.service.websocket.internalPort }}
               containerPort: {{ .Values.service.websocket.containerPort }}
               protocol: TCP
+        {{- if .Values.probes.startup.enabled }}
+          startupProbe:
+          {{- if .Values.probes.startup.httpGet.enabled }}
+            httpGet:
+              path: {{ .Values.probes.startup.httpGet.path }}
+              port: {{ .Values.service.containerPort }}
+          {{- else }}
+            tcpSocket:
+              port: {{ .Values.service.containerPort }}
+          {{- end }}
+            initialDelaySeconds: {{ .Values.probes.startup.initialDelaySeconds }}
+            timeoutSeconds: {{ .Values.probes.startup.timeoutSeconds }}
+            periodSeconds: {{ .Values.probes.startup.periodSeconds }}
+            failureThreshold: {{ .Values.probes.startup.failureThreshold }}
+            successThreshold: {{ .Values.probes.startup.successThreshold }}
+        {{- end }}
+        {{- if .Values.probes.liveness.enabled }}
           livenessProbe:
+          {{- if .Values.probes.liveness.httpGet.enabled }}
             httpGet:
-              path: /
-              port: http
+              path: {{ .Values.probes.liveness.httpGet.path }}
+              port: {{ .Values.service.containerPort }}
+          {{- else }}
+            tcpSocket:
+              port: {{ .Values.service.containerPort }}
+          {{- end }}
+            initialDelaySeconds: {{ .Values.probes.liveness.initialDelaySeconds }}
+            timeoutSeconds: {{ .Values.probes.liveness.timeoutSeconds }}
+            periodSeconds: {{ .Values.probes.liveness.periodSeconds }}
+            failureThreshold: {{ .Values.probes.liveness.failureThreshold }}
+            successThreshold: {{ .Values.probes.liveness.successThreshold }}
+        {{- end }}
+        {{- if .Values.probes.readiness.enabled }}
           readinessProbe:
+          {{- if .Values.probes.readiness.httpGet.enabled }}
             httpGet:
-              path: /
-              port: http
+              path: {{ .Values.probes.liveness.httpGet.path }}
+              port: {{ .Values.service.containerPort }}
+          {{- else }}
+            tcpSocket:
+              port: {{ .Values.service.containerPort }}
+          {{- end }}
+            initialDelaySeconds: {{ .Values.probes.readiness.initialDelaySeconds }}
+            timeoutSeconds: {{ .Values.probes.readiness.timeoutSeconds }}
+            periodSeconds: {{ .Values.probes.readiness.periodSeconds }}
+            failureThreshold: {{ .Values.probes.readiness.failureThreshold }}
+            successThreshold: {{ .Values.probes.readiness.successThreshold }}
+        {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:

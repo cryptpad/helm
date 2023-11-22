@@ -240,3 +240,58 @@ persistence:
       selector: {}
       dataSource: {}
 
+probes:
+  startup:
+    # -- Enable startup probe
+    enabled: true
+    httpGet:
+      # -- If enabled uses httpGet to check, if false uses tcpSocket checking. 
+      enabled: false
+      # -- Path to be tested with HTTP GET request
+      path: /
+    # -- Initial delay seconds for startup probe
+    initialDelaySeconds: 0
+    # -- Timeout seconds for startup probe
+    timeoutSeconds: 1
+    # -- Period seconds for startup probe
+    periodSeconds: 10
+    # -- Failure threshold for startup probe 
+    failureThreshold: 5
+    # -- Success threshold for startup probe
+    successThreshold: 1
+  liveness:
+    # -- Enable liveness probe
+    enabled: true
+    httpGet:
+      # -- If enabled uses httpGet to check, if false uses tcpSocket checking. 
+      enabled: true
+      # -- Path to be tested with HTTP GET request
+      path: /
+    # -- Initial delay seconds for liveness probe
+    initialDelaySeconds: 0
+    # -- Timeout seconds for liveness probe
+    timeoutSeconds: 1
+    # -- Period seconds for liveness probe
+    periodSeconds: 10
+    # -- Failure threshold for liveness probe 
+    failureThreshold: 5
+    # -- Success threshold for liveness probe
+    successThreshold: 1
+  readiness:
+    # -- Enable readiness probe
+    enabled: true
+    httpGet:
+      # -- If enabled uses httpGet to check, if false uses tcpSocket checking. 
+      enabled: true
+      # -- Path to be tested with HTTP GET request
+      path: /
+    # -- Initial delay seconds for readiness probe
+    initialDelaySeconds: 0
+    # -- Timeout seconds for readiness probe
+    timeoutSeconds: 1
+    # -- Period seconds for readiness probe
+    periodSeconds: 10
+    # -- Failure threshold for readiness probe 
+    failureThreshold: 5
+    # -- Success threshold for readiness probe
+    successThreshold: 1
