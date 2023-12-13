@@ -113,5 +113,5 @@ jobs:
             if [ -z "${pkg:-}" ]; then
               break
             fi
-            helm push  --debug  "${pkg}" oci://ghcr.io/${GITHUB_REPOSITORY_OWNER}/helm-charts
+            helm push  --debug  "${pkg}" oci://ghcr.io/${GITHUB_REPOSITORY_OWNER}/helm
           done
