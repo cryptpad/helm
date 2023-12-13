@@ -11,9 +11,10 @@ on:
       - '!**.md'
       - '!**.md.gotmpl'
 
-permissions:
-  contents: write
-  packages: write
+#permissions:
+#  contents: write
+#  packages: write
+permissions: write-all
 
 jobs:
 
@@ -112,5 +113,5 @@ jobs:
             if [ -z "${pkg:-}" ]; then
               break
             fi
-            helm push  --debug  "${pkg}" oci://ghcr.io/${GITHUB_REPOSITORY_OWNER}/helm
+            helm push  --debug  "${pkg}" oci://ghcr.io/${GITHUB_REPOSITORY_OWNER}/helm-charts
           done
