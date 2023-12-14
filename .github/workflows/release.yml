@@ -95,6 +95,9 @@ jobs:
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           CR_RELEASE_NAME_TEMPLATE: "cryptpad-helm-{{ .Version }}"
+          CR_SIGN: true
+          CR_KEY: "XWiki SAS"
+          # Values for CR_KEYRING and CR_PASSPHRASE_FILE was setup on Prepare GPG key
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
