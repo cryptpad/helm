@@ -2,15 +2,31 @@
 
 CryptPad is a collaboration office suite that is end-to-end-encrypted and open-source.
 
-![Version: 0.0.17-Beta.15](https://img.shields.io/badge/Version-0.0.17--Beta.15-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.0.17](https://img.shields.io/badge/Version-0.0.17-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 ## Installing the Chart
 
-Install the Helm Chart using:
+Install via OCI Registry:
+```bash
+helm install cryptpad oci://ghcr.io/cryptpad/helm/cryptpad --version 0.0.17
+```
 
-```console
+Install via Repository:
+
+```bash
 helm repo add cryptpad-github https://cryptpad.github.io/helm
-helm install cryptpad cryptpad-github/cryptpad
+helm install cryptpad cryptpad-github/cryptpad --version 0.0.17
+```
+cd
+## Signing
+
+Example of how verify signature of helm:
+
+```bash
+  # Download and convert key from ASCII armor format to binary.
+  curl https://extensions.xwiki.org/xwiki/bin/download/Extension/XWikiHelm/WebHome/helm-charts.asc | gpg --dearmor > helm-charts.gpg
+  # Verify thatthe signed chart:
+  helm fetch --verify cryptpad-github/cryptpad --version 0.0.17 --keyring helm-charts.gpg
 ```
 
 ### Configure and Customization

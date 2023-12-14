@@ -69,7 +69,12 @@ This project requires [Kubernetes 1.23+](https://kubernetes.io/) and [Helm](http
 
 ### :fast_forward: TL;DR;
 
-Install the Helm Chart using:
+Install via OCI Registry:
+```bash
+helm install cryptpad oci://ghcr.io/cryptpad/helm/cryptpad 
+```
+
+Install via Repository:
 
 ```bash
 helm repo add cryptpad-github https://cryptpad.github.io/helm
