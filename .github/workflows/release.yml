@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - 'feat/**'
     paths:
       - '.github/**'
       - 'charts/**'
@@ -53,6 +54,8 @@ jobs:
     # see: https://docs.github.com/en/actions/security-guides/automatic-token-authentication#modifying-the-permissions-for-the-github_token
     permissions:
       contents: write
+      packages: write
+
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -73,6 +76,20 @@ jobs:
           helm repo add bitnami https://charts.bitnami.com/bitnami
           helm plugin install https://github.com/helm-unittest/helm-unittest
 
+      - name: Prepare GPG key
+        run: |
+          gpg_dir=.cr-gpg
+          mkdir "$gpg_dir"
+          keyring="$gpg_dir/secring.gpg"
+          base64 -d <<< "$GPG_KEYRING_BASE64" > "$keyring"
+          passphrase_file="$gpg_dir/passphrase"
+          echo "$GPG_PASSPHRASE" > "$passphrase_file"
+          echo "CR_PASSPHRASE_FILE=$passphrase_file" >> "$GITHUB_ENV"
+          echo "CR_KEYRING=$keyring" >> "$GITHUB_ENV"
+        env:
+          GPG_KEYRING_BASE64: "${{ secrets.GPG_KEYRING_BASE64 }}"
+          GPG_PASSPHRASE: "${{ secrets.GPG_PASSPHRASE }}"
+
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.5.0
         env:
@@ -83,7 +100,7 @@ jobs:
         uses: docker/login-action@v1
         with:
           registry: ghcr.io
-          username: ${{ github.repository_owner }}
+          username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
   
       - name: Push Charts to GHCR
@@ -95,4 +112,3 @@ jobs:
             fi
             helm push "${pkg}" oci://ghcr.io/${GITHUB_REPOSITORY_OWNER}/helm
           done
-  
