@@ -37,31 +37,30 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       initContainers:
-      - name: init-{{ .Chart.Name }}
-        securityContext:
-          {{- toYaml .Values.securityContext | nindent 12 }}
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
-        command: ['/bin/sh', '-c']
-        volumeMounts:
-          - name: cryptpad-data
-            mountPath: /cryptpad/data
-            {{- if and .Values.persistence .Values.persistence.cryptpad.data.existingClaim }}
-              persistentVolumeClaim:
-                claimName: {{ tpl .Values.persistence.cryptpad.data.existingClaim $ }}
-            {{- end }}
-        args:
-        - |
-          FILE=/cryptpad/data/decrees/decree.ndjson
-          mkdir -p /cryptpad/data/decrees
-          VALUE='["ENABLE_EMBEDDING", [{{ .Values.enableEmbedding }}], "", 0]'
-          if  [ -f $FILE ] && [ $(grep -c "ENABLE_EMBEDDING" $FILE) -gt 0 ]
-          then
-            sed -i "s|.*ENABLE_EMBEDDING.*|$VALUE|g" "$FILE"
-          else           
-            echo "$VALUE" >> "$FILE"
-          fi
-
+        - name: init-{{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ['/bin/sh', '-c']
+          volumeMounts:
+            - name: cryptpad-data
+              mountPath: /cryptpad/data
+              {{- if and .Values.persistence .Values.persistence.cryptpad.data.existingClaim }}
+                persistentVolumeClaim:
+                  claimName: {{ tpl .Values.persistence.cryptpad.data.existingClaim $ }}
+              {{- end }}
+          args:
+            - |
+              FILE=/cryptpad/data/decrees/decree.ndjson
+              mkdir -p /cryptpad/data/decrees
+              VALUE='["ENABLE_EMBEDDING", [{{ .Values.enableEmbedding }}], "", 0]'
+              if  [ -f $FILE ] && [ $(grep -c "ENABLE_EMBEDDING" $FILE) -gt 0 ]
+              then
+                sed -i "s|.*ENABLE_EMBEDDING.*|$VALUE|g" "$FILE"
+              else
+                echo "$VALUE" >> "$FILE"
+              fi
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -69,12 +68,12 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-          - name: CPAD_MAIN_DOMAIN       
-            value: "{{ include "cryptpad-helm.mainDomain" . }}"
-          - name: CPAD_SANDBOX_DOMAIN
-            value: "{{ include "cryptpad-helm.sandboxDomain" . }}"
-          - name: CPAD_CONF
-            value: "{{ .Values.cpadConfig }}"
+            - name: CPAD_MAIN_DOMAIN
+              value: "{{ include "cryptpad-helm.mainDomain" . | trim }}"
+            - name: CPAD_SANDBOX_DOMAIN
+              value: "{{ include "cryptpad-helm.sandboxDomain" . | trim }}"
+            - name: CPAD_CONF
+              value: "{{ .Values.cpadConfig }}"
           ports:
             - name: {{ .Values.service.internalPort }}
               containerPort: {{ .Values.service.containerPort }}
@@ -135,25 +134,25 @@ spec:
           volumeMounts:
           {{- if .Values.persistence.enabled }}
           {{- range $dir, $dirvalues := .Values.persistence.cryptpad }}
-          - name: cryptpad-{{ $dir }}
-            mountPath: /cryptpad/{{ $dir }}
-            {{- if $dirvalues.existingClaim }}
-              persistentVolumeClaim:
-                claimName: {{ tpl $dirvalues.existingClaim $ }}
-            {{- end }}
+            - name: cryptpad-{{ $dir }}
+              mountPath: /cryptpad/{{ $dir }}
+              {{- if $dirvalues.existingClaim }}
+                persistentVolumeClaim:
+                  claimName: {{ tpl $dirvalues.existingClaim $ }}
+              {{- end }}
           {{- end }}
           {{- else if not .Values.workloadStateful }}
           {{- range $dir, $dirvalues := .Values.persistence.cryptpad }}
-          - name: cryptpad-{{ $dir }}
-            mountPath: /cryptpad/{{ $dir }}
+            - name: cryptpad-{{ $dir }}
+              mountPath: /cryptpad/{{ $dir }}
           {{- end }}
           {{- end }}
-          - name: configmaps
-            mountPath: {{ .Values.cpadConfig }}
-            subPath: config.js
-          - name: configmaps
-            mountPath: /cryptpad/customize/application_config.js
-            subPath: application_config.js
+            - name: configmaps
+              mountPath: {{ .Values.cpadConfig }}
+              subPath: config.js
+            - name: configmaps
+              mountPath: /cryptpad/customize/application_config.js
+              subPath: application_config.js
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -167,60 +166,60 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-      - name: configmaps
-        configMap:
-          name: {{ include "cryptpad-helm.fullname" . }}
-{{- if and .Values.persistence.enabled .Values.workloadStateful}}
-      {{- range $dir, $dirvalues := .Values.persistence.cryptpad }}
-      {{- if $dirvalues.existingClaim }}
-      - name: cryptpad-{{ $dir }}
+        - name: configmaps
+          configMap:
+            name: {{ include "cryptpad-helm.fullname" . }}
+        {{- if and .Values.persistence.enabled .Values.workloadStateful }}
+        {{- range $dir, $dirvalues := .Values.persistence.cryptpad }}
+        {{- if $dirvalues.existingClaim }}
+        - name: cryptpad-{{ $dir }}
           persistentVolumeClaim:
             claimName: cryptpad-{{ $dir }}
+        {{- end }}
+        {{- end }}
+    volumeClaimTemplates:
+      {{- range $dir, $dirvalues := .Values.persistence.cryptpad }}
+      {{- if not $dirvalues.existingClaim }}
+      - metadata:
+          name: cryptpad-{{ $dir }}
+          {{- with $dirvalues.annotations }}
+          annotations:
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
+          {{- with $dirvalues.labels }}
+          labels:
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
+        spec:
+          accessModes:
+          {{- range $dirvalues.accessModes }}
+            - {{ . | quote }}
+          {{- end }}
+          {{- if $dirvalues.storageClass }}
+          storageClassName:  {{ $dirvalues.storageClass | quote }}
+          {{- end }}
+          {{- with $dirvalues.dataSource }}
+          dataSource:
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
+          resources:
+            requests:
+              storage: {{ $dirvalues.size | quote }}
+          {{- with $dirvalues.selector }}
+          selector:
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
       {{- end }}
       {{- end }}
-  volumeClaimTemplates:
+  {{- else if .Values.persistence.enabled }}
     {{- range $dir, $dirvalues := .Values.persistence.cryptpad }}
-    {{- if not $dirvalues.existingClaim }}
-    - metadata:
-        name: cryptpad-{{ $dir }}
-        {{- with $dirvalues.annotations }}
-        annotations:
-          {{- toYaml . | nindent 10 }}
-        {{- end }}
-        {{- with $dirvalues.labels }}
-        labels:
-          {{- toYaml . | nindent 10 }}
-        {{- end }}
-      spec:
-        accessModes:
-        {{- range $dirvalues.accessModes }}
-          - {{ . | quote }}
-        {{- end }}
-        {{- if $dirvalues.storageClass }}
-        storageClassName:  {{ $dirvalues.storageClass | quote }}
-        {{- end }}
-        {{- with $dirvalues.dataSource }}
-        dataSource: 
-          {{- toYaml . | nindent 10 }}
-        {{- end }}
-        resources:
-          requests:
-            storage: {{ $dirvalues.size | quote }}
-        {{- with $dirvalues.selector }}
-        selector: 
-          {{- toYaml . | nindent 10 }}
-        {{- end }}
+        - name: cryptpad-{{ $dir }}
+          persistentVolumeClaim:
+            claimName: cryptpad-{{ $dir }}
     {{- end }}
-    {{- end }}
-{{- else if .Values.persistence.enabled }}
-  {{- range $dir, $dirvalues := .Values.persistence.cryptpad }}
-      - name: cryptpad-{{ $dir }}
-        persistentVolumeClaim:
-          claimName: cryptpad-{{ $dir }}
-  {{- end }}
-{{- else }}
-  {{- range $dir, $dirvalues := .Values.persistence.cryptpad }}
-      - name: cryptpad-{{ $dir }}
-        emptyDir: {}
+  {{- else }}
+    {{- range $dir, $dirvalues := .Values.persistence.cryptpad }}
+        - name: cryptpad-{{ $dir }}
+          emptyDir: {}
   {{- end }}
 {{- end }}

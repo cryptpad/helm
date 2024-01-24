@@ -62,27 +62,27 @@ Create the name of the service account to use
 {{- end }}
 
 {{/*
-Define main domain. Or use first ingress host defined as main domain. 
+Define main domain. Or use first ingress host defined as main domain.
 */}}
 {{- define "cryptpad-helm.mainDomain" -}}
 {{- if .Values.ingress.enabled }}
 https://{{ (index .Values.ingress.hosts 0).host }}
-{{- else if .Values.config.httpUnsafeOrigin }}  
+{{- else if .Values.config.httpUnsafeOrigin }}
 {{- .Values.config.httpUnsafeOrigin }}
 {{- else }}
 http://localhost:3000
-{{- end}}
+{{- end }}
 {{- end }}
 
 {{/*
-Define sandbox subdomain. Or use first ingress host defined as main domain. 
+Define sandbox subdomain. Or use first ingress host defined as main domain.
 */}}
 {{- define "cryptpad-helm.sandboxDomain" -}}
 {{- if .Values.ingress.enabled }}
 https://{{ (index .Values.ingress.hosts 0).host }}
-{{- else if .Values.config.httpSafeOrigin }}  
+{{- else if .Values.config.httpSafeOrigin }}
 {{- .Values.config.httpSafeOrigin }}
 {{- else }}
 http://localhost:3000
-{{- end}}
+{{- end }}
 {{- end }}
