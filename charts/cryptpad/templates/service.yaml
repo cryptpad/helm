@@ -13,14 +13,14 @@ spec:
     {{- end }}
   {{- end }}
   ports:
-  - port: {{ .Values.service.externalPort }}
-    targetPort: {{ .Values.service.internalPort }}
-    protocol: TCP
-    name: {{ .Values.service.name }}
-  - port: {{ .Values.service.websocket.externalPort }}
-    targetPort: {{ .Values.service.websocket.internalPort }}
-    protocol: TCP
-    name: {{ .Values.service.websocket.internalPort }}
+    - port: {{ .Values.service.externalPort }}
+      targetPort: {{ .Values.service.internalPort }}
+      protocol: TCP
+      name: {{ .Values.service.name }}
+    - port: {{ .Values.service.websocket.externalPort }}
+      targetPort: {{ .Values.service.websocket.internalPort }}
+      protocol: TCP
+      name: {{ .Values.service.websocket.internalPort }}
   sessionAffinity: {{ .Values.service.sessionAffinity }}
   selector:
     {{- include "cryptpad-helm.selectorLabels" . | nindent 4 }}
