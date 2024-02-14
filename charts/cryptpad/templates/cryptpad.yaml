@@ -177,41 +177,41 @@ spec:
             claimName: cryptpad-{{ $dir }}
         {{- end }}
         {{- end }}
-    volumeClaimTemplates:
-      {{- range $dir, $dirvalues := .Values.persistence.cryptpad }}
-      {{- if not $dirvalues.existingClaim }}
-      - metadata:
-          name: cryptpad-{{ $dir }}
-          {{- with $dirvalues.annotations }}
-          annotations:
-            {{- toYaml . | nindent 10 }}
-          {{- end }}
-          {{- with $dirvalues.labels }}
-          labels:
-            {{- toYaml . | nindent 10 }}
-          {{- end }}
-        spec:
-          accessModes:
-          {{- range $dirvalues.accessModes }}
-            - {{ . | quote }}
-          {{- end }}
-          {{- if $dirvalues.storageClass }}
-          storageClassName:  {{ $dirvalues.storageClass | quote }}
-          {{- end }}
-          {{- with $dirvalues.dataSource }}
-          dataSource:
-            {{- toYaml . | nindent 10 }}
-          {{- end }}
-          resources:
-            requests:
-              storage: {{ $dirvalues.size | quote }}
-          {{- with $dirvalues.selector }}
-          selector:
-            {{- toYaml . | nindent 10 }}
-          {{- end }}
+  volumeClaimTemplates:
+  {{- range $dir, $dirvalues := .Values.persistence.cryptpad }}
+    {{- if not $dirvalues.existingClaim }}
+    - metadata:
+        name: cryptpad-{{ $dir }}
+        {{- with $dirvalues.annotations }}
+        annotations:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- with $dirvalues.labels }}
+        labels:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+      spec:
+        accessModes:
+        {{- range $dirvalues.accessModes }}
+          - {{ . | quote }}
+        {{- end }}
+        {{- if $dirvalues.storageClass }}
+        storageClassName:  {{ $dirvalues.storageClass | quote }}
+        {{- end }}
+        {{- with $dirvalues.dataSource }}
+        dataSource:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ $dirvalues.size | quote }}
+        {{- with $dirvalues.selector }}
+        selector:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
       {{- end }}
-      {{- end }}
-  {{- else if .Values.persistence.enabled }}
+    {{- end }}
+    {{- else if .Values.persistence.enabled }}
     {{- range $dir, $dirvalues := .Values.persistence.cryptpad }}
         - name: cryptpad-{{ $dir }}
           persistentVolumeClaim:
