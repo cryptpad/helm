@@ -12,7 +12,7 @@ workloadStateful: true
 image:
   pullPolicy: IfNotPresent
   repository: cryptpad/cryptpad
-  tag: "version-5.5.0"
+  tag: "version-5.7.0"
   # repository: git.xwikisas.com:5050/xwiki-cloud-infrastructure/docker-images/cryptpad
   # tag: "latest"
 
