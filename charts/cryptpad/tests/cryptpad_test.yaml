@@ -1,7 +1,7 @@
 suite: test cryptpad
 templates:
-  - templates/cryptpad.yaml
-  - templates/configmap.yaml
+  - configmap.yaml
+  - cryptpad.yaml
 tests:
   - it: should have the good values
     set:
@@ -15,7 +15,7 @@ tests:
     asserts:
       - isKind:
           of: StatefulSet
-        template: templates/cryptpad.yaml
+        template: cryptpad.yaml
 # Prevent requirement of always change snapshots when other improvements/changes are made. 
 #      - matchSnapshot:
 #          path: spec
@@ -26,9 +26,55 @@ tests:
     asserts:
       - isKind:
           of: Deployment
-        template: templates/cryptpad.yaml
-# Prevent requirement of always change snapshots when other improvements/changes are made. 
-# Or check to ignore checksum from configmap from annotations 
-#      - matchSnapshot:
-#          path: spec
-#        template: templates/cryptpad.yaml
+        template: cryptpad.yaml
+  - it: should be able to use existing PV claims
+    set:
+      workloadStateful: false
+      persistence:
+        enabled: true
+        cryptpad:
+          data:
+            existingClaim: "test-pv"
+            storageClass: "test-drive"
+            accessModes:
+              - ReadWriteOnce
+            size: "100Mi"
+          datastore:
+            existingClaim: "test-pv"
+            storageClass: "test-drive"
+            size: "100Mi"
+            accessModes:
+              - ReadWriteOnce
+    asserts:
+      - equal:
+          path: spec.template.spec.initContainers[0].name
+          value: init-cryptpad
+        template: cryptpad.yaml
+      - equal:
+          path: spec.template.spec.initContainers[0].volumeMounts[0].name
+          value: cryptpad-data
+        template: cryptpad.yaml
+      - equal:
+          path: spec.template.spec.initContainers[0].volumeMounts[0].persistentVolumeClaim.claimName
+          value: test-pv
+        template: cryptpad.yaml
+      - equal:
+          path: spec.template.spec.containers[0].name
+          value: cryptpad
+        template: cryptpad.yaml
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            mountPath: /cryptpad/data
+            name: cryptpad-data
+            persistentVolumeClaim:
+              claimName: test-pv
+        template: cryptpad.yaml
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            mountPath: /cryptpad/datastore
+            name: cryptpad-datastore
+            persistentVolumeClaim:
+              claimName: test-pv
+        template: cryptpad.yaml
