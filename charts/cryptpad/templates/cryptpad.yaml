@@ -61,6 +61,8 @@ spec:
               else
                 echo "$VALUE" >> "$FILE"
               fi
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
