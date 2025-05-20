@@ -1,5 +1,6 @@
 {{- if and .Values.persistence.enabled (not .Values.workloadStateful) }}
 {{- range $dir, $dirvalues := .Values.persistence.cryptpad }}
+---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
