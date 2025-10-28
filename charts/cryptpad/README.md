@@ -24,7 +24,7 @@ Example of how verify signature of helm:
 
 ```bash
   # Download and convert key from ASCII armor format to binary.
-  curl https://extensions.xwiki.org/xwiki/bin/download/Extension/XWikiHelm/WebHome/helm-charts.asc | gpg --dearmor > helm-charts.gpg
+  curl https://xwiki-contrib.github.io/xwiki-helm/helm-charts.asc | gpg --dearmor > helm-charts.gpg
   # Verify thatthe signed chart:
   helm fetch --verify cryptpad-github/cryptpad --version 0.0.20 --keyring helm-charts.gpg
 ```
