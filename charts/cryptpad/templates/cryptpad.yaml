@@ -138,10 +138,6 @@ spec:
           {{- range $dir, $dirvalues := .Values.persistence.cryptpad }}
             - name: cryptpad-{{ $dir }}
               mountPath: /cryptpad/{{ $dir }}
-              {{- if $dirvalues.existingClaim }}
-              persistentVolumeClaim:
-                claimName: {{ tpl $dirvalues.existingClaim $ }}
-              {{- end }}
           {{- end }}
           {{- else if not .Values.workloadStateful }}
           {{- range $dir, $dirvalues := .Values.persistence.cryptpad }}
@@ -176,7 +172,7 @@ spec:
         {{- if $dirvalues.existingClaim }}
         - name: cryptpad-{{ $dir }}
           persistentVolumeClaim:
-            claimName: cryptpad-{{ $dir }}
+            claimName: {{ tpl $dirvalues.existingClaim $ }}
         {{- end }}
         {{- end }}
   volumeClaimTemplates:
