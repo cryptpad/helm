@@ -136,7 +136,7 @@ spec:
           volumeMounts:
           {{- if .Values.persistence.enabled }}
           {{- range $dir, $dirvalues := .Values.persistence.cryptpad }}
-            - name: cryptpad-{{ $dir }}
+            - name: cryptpad-{{ $dir | replace "/" "-" }}
               mountPath: /cryptpad/{{ $dir }}
               {{- if $dirvalues.existingClaim }}
                 persistentVolumeClaim:
@@ -145,7 +145,7 @@ spec:
           {{- end }}
           {{- else if not .Values.workloadStateful }}
           {{- range $dir, $dirvalues := .Values.persistence.cryptpad }}
-            - name: cryptpad-{{ $dir }}
+            - name: cryptpad-{{ $dir | replace "/" "-" }}
               mountPath: /cryptpad/{{ $dir }}
           {{- end }}
           {{- end }}
@@ -174,16 +174,16 @@ spec:
         {{- if and .Values.persistence.enabled .Values.workloadStateful }}
         {{- range $dir, $dirvalues := .Values.persistence.cryptpad }}
         {{- if $dirvalues.existingClaim }}
-        - name: cryptpad-{{ $dir }}
+        - name: cryptpad-{{ $dir | replace "/" "-" }}
           persistentVolumeClaim:
-            claimName: cryptpad-{{ $dir }}
+            claimName: cryptpad-{{ $dir | replace "/" "-" }}
         {{- end }}
         {{- end }}
   volumeClaimTemplates:
   {{- range $dir, $dirvalues := .Values.persistence.cryptpad }}
     {{- if not $dirvalues.existingClaim }}
     - metadata:
-        name: cryptpad-{{ $dir }}
+        name: cryptpad-{{ $dir | replace "/" "-" }}
         {{- with $dirvalues.annotations }}
         annotations:
           {{- toYaml . | nindent 10 }}
@@ -215,13 +215,13 @@ spec:
     {{- end }}
     {{- else if .Values.persistence.enabled }}
     {{- range $dir, $dirvalues := .Values.persistence.cryptpad }}
-        - name: cryptpad-{{ $dir }}
+        - name: cryptpad-{{ $dir | replace "/" "-" }}
           persistentVolumeClaim:
-            claimName: cryptpad-{{ $dir }}
+            claimName: cryptpad-{{ $dir | replace "/" "-" }}
     {{- end }}
   {{- else }}
     {{- range $dir, $dirvalues := .Values.persistence.cryptpad }}
-        - name: cryptpad-{{ $dir }}
+        - name: cryptpad-{{ $dir | replace "/" "-" }}
           emptyDir: {}
   {{- end }}
 {{- end }}
