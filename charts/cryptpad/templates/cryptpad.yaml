@@ -46,10 +46,6 @@ spec:
           volumeMounts:
             - name: cryptpad-data
               mountPath: /cryptpad/data
-              {{- if and .Values.persistence .Values.persistence.cryptpad.data.existingClaim }}
-                persistentVolumeClaim:
-                  claimName: {{ tpl .Values.persistence.cryptpad.data.existingClaim $ }}
-              {{- end }}
           args:
             - |
               FILE=/cryptpad/data/decrees/decree.ndjson
@@ -138,10 +134,6 @@ spec:
           {{- range $dir, $dirvalues := .Values.persistence.cryptpad }}
             - name: cryptpad-{{ $dir | replace "/" "-" }}
               mountPath: /cryptpad/{{ $dir }}
-              {{- if $dirvalues.existingClaim }}
-                persistentVolumeClaim:
-                  claimName: {{ tpl $dirvalues.existingClaim $ }}
-              {{- end }}
           {{- end }}
           {{- else if not .Values.workloadStateful }}
           {{- range $dir, $dirvalues := .Values.persistence.cryptpad }}
@@ -176,7 +168,7 @@ spec:
         {{- if $dirvalues.existingClaim }}
         - name: cryptpad-{{ $dir | replace "/" "-" }}
           persistentVolumeClaim:
-            claimName: cryptpad-{{ $dir | replace "/" "-" }}
+            claimName: {{ tpl $dirvalues.existingClaim $ }}
         {{- end }}
         {{- end }}
   volumeClaimTemplates:
