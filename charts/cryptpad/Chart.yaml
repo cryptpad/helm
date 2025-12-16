@@ -34,6 +34,6 @@ maintainers:
   - name: Arsène Fougerouse
     email: arsene.fougerouse@xwiki.com
 dependencies:
-  - name: "common"
-    repository: "https://charts.bitnami.com/bitnami"
-    version: "2.9.1"
+  - name: common
+    repository: oci://registry-1.docker.io/bitnamicharts
+    version: 2.x.x
