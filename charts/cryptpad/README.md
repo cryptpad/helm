@@ -57,7 +57,7 @@ application_config:
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://charts.bitnami.com/bitnami | common | 2.9.1 |
+| oci://registry-1.docker.io/bitnamicharts | common | 2.x.x |
 
 ## Values
 
@@ -161,6 +161,7 @@ application_config:
 | probes.startup.timeoutSeconds | int | `1` | Timeout seconds for startup probe |
 | replicaCount | int | `1` | Number of replicas |
 | resources | object | `{}` | Specify default resources. We usually recommend not to specify default resources and to leave this as a conscious choice for the user. This also increases chances charts run on environments with little resources, such as Minikube. |
+| restrictRegistration | bool | `false` | Restrict registration to only users with admin keys |
 | securityContext | object | `{}` | Security context |
 | service.containerPort | int | `3000` |  |
 | service.externalIPs | list | `[]` |  |
