@@ -97,6 +97,8 @@ config:
 
 # -- Allow documents and media be embedded on other websites. This will add an "Embed" option on the Share menu.
 enableEmbedding: false
+# -- Restrict registration to only users with admin keys
+restrictRegistration: false
 
 imagePullSecrets: []
 nameOverride: ""

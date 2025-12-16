@@ -57,6 +57,13 @@ spec:
               else
                 echo "$VALUE" >> "$FILE"
               fi
+              VALUE='["RESTRICT_REGISTRATION", [{{ .Values.restrictRegistration }}], "", 0]'
+              if  [ -f $FILE ] && [ $(grep -c "RESTRICT_REGISTRATION" $FILE) -gt 0 ]
+              then
+                sed -i "s|.*RESTRICT_REGISTRATION.*|$VALUE|g" "$FILE"
+              else
+                echo "$VALUE" >> "$FILE"
+              fi
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       containers:
