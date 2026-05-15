@@ -100,6 +100,44 @@ enableEmbedding: false
 # -- Restrict registration to only users with admin keys
 restrictRegistration: false
 
+# -- Additional init containers (e.g. clone a plugin into a shared volume).
+# Rendered into `.spec.template.spec.initContainers` after the built-in init container.
+extraInitContainers: []
+  # - name: install-sso-plugin
+  #   image: alpine/git:2.45.2
+  #   command: ['sh', '-c', 'git clone --depth=1 https://github.com/cryptpad/sso /plugins/sso']
+  #   volumeMounts:
+  #     - name: sso-plugin
+  #       mountPath: /plugins
+
+# -- Additional sidecar containers. Rendered into `.spec.template.spec.containers` after the main container.
+extraContainers: []
+
+# -- Additional volumes for the pod. Rendered into `.spec.template.spec.volumes`.
+extraVolumes: []
+  # - name: sso-plugin
+  #   emptyDir: {}
+  # - name: sso-config
+  #   secret:
+  #     secretName: cryptpad-sso
+
+# -- Additional volume mounts for the main container.
+extraVolumeMounts: []
+  # - name: sso-plugin
+  #   mountPath: /cryptpad/lib/plugins/sso
+  #   subPath: sso
+  # - name: sso-config
+  #   mountPath: /cryptpad/config/sso.js
+  #   subPath: sso.js
+
+# -- Additional environment variables for the main container (raw env entries, supports valueFrom).
+extraEnv: []
+  # - name: OIDC_CLIENT_SECRET
+  #   valueFrom:
+  #     secretKeyRef:
+  #       name: cryptpad-sso
+  #       key: client_secret
+
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
