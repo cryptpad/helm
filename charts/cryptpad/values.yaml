@@ -5,6 +5,15 @@
 # -- Number of replicas
 replicaCount: 1
 
+# -- Primary hostname for CryptPad (no scheme). Used for httpUnsafeOrigin, CPAD_MAIN_DOMAIN,
+# and ingress/httpRoute host rules. Example: cryptpad.example.org
+mainDomain: ""
+
+# -- Sandbox hostname for CryptPad security isolation (no scheme). Used for httpSafeOrigin and
+# CPAD_SANDBOX_DOMAIN. Must be a *different* domain or subdomain from mainDomain.
+# If empty, mainDomain is reused (insecure). Example: sandbox.cryptpad.example.org
+sandboxDomain: ""
+
 # -- Enable to choose witch kind of workload will be used: (true) StatefulSet or (false) for Deployment
 workloadStateful: true
 
@@ -196,11 +205,21 @@ ingress:
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
-  hosts:
-    # if the ingress is enabled, this hostname will be used for httpUnsafeOrigin and httpSafeOrigin
-    - host: localhost
   tls: []
   #  - secretName: secret-tls
+  #    hosts: []  # auto-populated from mainDomain/sandboxDomain when empty
+
+httpRoute:
+  enabled: false
+  annotations: {}
+  parentRefs: []
+  # -- requires cluster enabled default gateway (here envoy as example)
+  #- name: default-gateway
+  #  namespace: infrastructure-envoy-gateway-default
+  #  sectionName: default
+  timeouts: {}
+    # backendRequest: 120s
+
 
 # -- Specify default resources.
 # We usually recommend not to specify default resources and to leave this as a conscious
@@ -222,7 +241,8 @@ autoscaling:
   # -- Minimal numbers of replicas
   minReplicas: 1
   # -- Maximum numbers of replicas
-  maxReplicas: 100
+  # TODO: does cryptpad support HA?
+  maxReplicas: 1
   # -- Percentage of the targeted CPU Utilization
   targetCPUUtilizationPercentage: 80
   # -- Percentage of the targeted Memory Utilization

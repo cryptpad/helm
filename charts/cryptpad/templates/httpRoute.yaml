@@ -1,0 +1,56 @@
+{{- if .Values.httpRoute.enabled -}}
+{{- $fullName := include "cryptpad-helm.fullname" . -}}
+{{- $svcPort := .Values.service.externalPort -}}
+{{- $svcWsPort := .Values.service.websocket.externalPort -}}
+{{- if not .Values.httpRoute.parentRefs }}
+    {{- fail "A valid .Values.httpRoute.parentRefs entry is required when httpRoute.enabled is true" }}
+{{- end }}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ $fullName }}
+  labels:
+    {{- include "cryptpad-helm.labels" . | nindent 4 }}
+  {{- with .Values.httpRoute.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with .Values.httpRoute.parentRefs }}
+  parentRefs:
+  {{- . | toYaml | nindent 2 }}
+  {{- end }}
+  hostnames:
+  - {{ .Values.mainDomain | quote }}
+  {{- if .Values.sandboxDomain }}
+  - {{ .Values.sandboxDomain | quote }}
+  {{- end }}
+  rules:
+  - matches:
+    - path:
+        value: /
+        type: PathPrefix
+    backendRefs:
+    - group: ''
+      kind: Service 
+      name: {{ $fullName }}
+      port: {{ $svcPort }}
+    {{- with .Values.httpRoute.timeouts }}
+    timeouts:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+  - matches:
+    - path:
+        value: /cryptpad_websocket
+        type: PathPrefix
+    backendRefs:
+    - group: ''
+      kind: Service 
+      name: {{ $fullName }}
+      port: {{ $svcWsPort }}
+    {{- with .Values.httpRoute.timeouts }}
+    timeouts:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+{{- end }}

@@ -7,11 +7,11 @@ metadata:
   name: cryptpad-{{ $dir | replace "/" "-" }}
   {{- with $dirvalues.annotations }}
   annotations:
-    {{- toYaml . | nindent 10 }}
+    {{- toYaml . | nindent 4 }}
   {{- end }}
   {{- with $dirvalues.labels }}
   labels:
-    {{- toYaml . | nindent 10 }}
+    {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
   accessModes:
@@ -23,14 +23,14 @@ spec:
   {{- end }}
   {{- with $dirvalues.dataSource }}
   dataSource: 
-    {{- toYaml . | nindent 10 }}
+    {{- toYaml . | nindent 4 }}
   {{- end }}
   resources:
     requests:
       storage: {{ $dirvalues.size | quote }}
   {{- with $dirvalues.selector }}
   selector: 
-    {{- toYaml . | nindent 10 }}
+    {{- toYaml . | nindent 4 }}
   {{- end }}
   {{- end }}
 {{- end }}

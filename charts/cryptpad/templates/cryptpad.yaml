@@ -1,8 +1,8 @@
+---
+apiVersion: apps/v1
 {{- if .Values.workloadStateful }}
-apiVersion: {{ include "common.capabilities.statefulset.apiVersion" . }}
 kind: StatefulSet
 {{- else }}
-apiVersion: {{ include "common.capabilities.deployment.apiVersion" . }}
 kind: Deployment
 {{- end }}
 metadata:
@@ -50,6 +50,8 @@ spec:
           volumeMounts:
             - name: cryptpad-data
               mountPath: /cryptpad/data
+            - mountPath: /tmp
+              name: tmp
           args:
             - |
               FILE=/cryptpad/data/decrees/decree.ndjson
@@ -132,7 +134,7 @@ spec:
           readinessProbe:
           {{- if .Values.probes.readiness.httpGet.enabled }}
             httpGet:
-              path: {{ .Values.probes.liveness.httpGet.path }}
+              path: {{ .Values.probes.readiness.httpGet.path }}
               port: {{ .Values.service.containerPort }}
           {{- else }}
             tcpSocket:
@@ -147,16 +149,16 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
-          {{- if .Values.persistence.enabled }}
           {{- range $dir, $dirvalues := .Values.persistence.cryptpad }}
+            {{- $mountPath := printf "/cryptpad/%s" $dir }}
+            {{- $skip := false }}
+            {{- range $.Values.extraVolumeMounts }}
+              {{- if eq .mountPath $mountPath }}{{- $skip = true }}{{- end }}
+            {{- end }}
+            {{- if not $skip }}
             - name: cryptpad-{{ $dir | replace "/" "-" }}
-              mountPath: /cryptpad/{{ $dir }}
-          {{- end }}
-          {{- else if not .Values.workloadStateful }}
-          {{- range $dir, $dirvalues := .Values.persistence.cryptpad }}
-            - name: cryptpad-{{ $dir | replace "/" "-" }}
-              mountPath: /cryptpad/{{ $dir }}
-          {{- end }}
+              mountPath: {{ $mountPath }}
+            {{- end }}
           {{- end }}
             - name: configmaps
               mountPath: {{ .Values.cpadConfig }}
@@ -164,6 +166,8 @@ spec:
             - name: configmaps
               mountPath: /cryptpad/customize/application_config.js
               subPath: application_config.js
+            - mountPath: /tmp
+              name: tmp
             {{- with .Values.extraVolumeMounts }}
               {{- toYaml . | nindent 12 }}
             {{- end }}
@@ -183,6 +187,8 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
+        - name: tmp
+          emptyDir: {}
         - name: configmaps
           configMap:
             name: {{ include "cryptpad-helm.fullname" . }}
@@ -239,7 +245,14 @@ spec:
     {{- end }}
   {{- else }}
     {{- range $dir, $dirvalues := .Values.persistence.cryptpad }}
-        - name: cryptpad-{{ $dir | replace "/" "-" }}
+      {{- $volName := printf "cryptpad-%s" ($dir | replace "/" "-") }}
+      {{- $skip := false }}
+      {{- range $.Values.extraVolumes }}
+        {{- if eq .name $volName }}{{- $skip = true }}{{- end }}
+      {{- end }}
+      {{- if not $skip }}
+        - name: {{ $volName }}
           emptyDir: {}
-  {{- end }}
+      {{- end }}
+    {{- end }}
 {{- end }}

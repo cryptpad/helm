@@ -1,3 +1,4 @@
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -9,21 +10,8 @@ data:
     /* globals module */
 
     module.exports = {
-          {{- if .Values.ingress.enabled}}  
-            httpUnsafeOrigin: 'https://{{ (index .Values.ingress.hosts 0).host }}',
-          {{- else if .Values.config.httpUnsafeOrigin }}
-            httpUnsafeOrigin: {{ .Values.config.httpUnsafeOrigin | quote }}, 
-          {{- else }}
-            httpUnsafeOrigin: 'http://localhost:3000',
-          {{- end}}
-       
-          {{- if .Values.ingress.enabled }}
-            httpSafeOrigin: 'https://{{ (index .Values.ingress.hosts 0).host }}',
-          {{- else if .Values.config.httpSafeOrigin }}  
-            httpSafeOrigin: {{ .Values.config.httpSafeOrigin | quote }}, 
-          {{- else }}
-            httpSafeOrigin: 'http://localhost:3000',
-          {{- end}}
+          httpUnsafeOrigin: '{{ include "cryptpad-helm.mainDomain" . | trim }}',
+          httpSafeOrigin: '{{ include "cryptpad-helm.sandboxDomain" . | trim }}',
 
           {{- if .Values.config.adminKeys }}
             adminKeys: [
@@ -41,12 +29,16 @@ data:
           {{- end}}
 
           {{- range $key, $value := .Values.config }}
-            {{- if and (or (ne $key "httpUnsafeOrigin") (ne $key "httpSafeOrigin")) (ne $key "adminKeys")  (ne $key "maxUploadSize")}}
-            {{ $key }}: {{ $value | quote }},
+            {{- if and (ne $key "httpUnsafeOrigin") (ne $key "httpSafeOrigin") (ne $key "adminKeys") (ne $key "maxUploadSize") }}
+              {{- if or (kindIs "bool" $value) (kindIs "float64" $value) (kindIs "int64" $value) }}
+              {{ $key }}: {{ $value }},
+              {{- else if or (kindIs "slice" $value) (kindIs "map" $value) }}
+              {{ $key }}: {{ $value | toJson }},
+              {{- else }}
+              {{ $key }}: {{ $value | quote }},
+              {{- end }}
             {{- end }}
           {{- end }}
-
-
         };
   application_config.js: |
     /*
