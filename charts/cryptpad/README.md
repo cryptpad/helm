@@ -53,12 +53,6 @@ application_config:
     }
 ```
 
-## Requirements
-
-| Repository | Name | Version |
-|------------|------|---------|
-| oci://registry-1.docker.io/bitnamicharts | common | 2.x.x |
-
 ## Values
 
 | Key | Type | Default | Description |
@@ -66,7 +60,7 @@ application_config:
 | affinity | object | `{}` | Values for the Affinity |
 | application_config | string | `nil` | Configuration of the [application](https://docs.cryptpad.org/en/admin_guide/customization.html#application-config) |
 | autoscaling.enabled | bool | `false` | Enable the Autoscaling |
-| autoscaling.maxReplicas | int | `100` | Maximum numbers of replicas |
+| autoscaling.maxReplicas | int | `1` | Maximum numbers of replicas TODO: does cryptpad support HA? |
 | autoscaling.minReplicas | int | `1` | Minimal numbers of replicas |
 | autoscaling.targetCPUUtilizationPercentage | int | `80` | Percentage of the targeted CPU Utilization |
 | autoscaling.targetMemoryUtilizationPercentage | int | `80` | Percentage of the targeted Memory Utilization |
@@ -96,6 +90,10 @@ application_config:
 | extraVolumeMounts | list | `[]` | Additional volume mounts for the main container. |
 | extraVolumes | list | `[]` | Additional volumes for the pod. Rendered into `.spec.template.spec.volumes`. |
 | fullnameOverride | string | `""` |  |
+| httpRoute.annotations | object | `{}` |  |
+| httpRoute.enabled | bool | `false` |  |
+| httpRoute.parentRefs | list | `[]` |  |
+| httpRoute.timeouts | object | `{}` | requires cluster enabled default gateway (here envoy as example) - name: default-gateway  namespace: infrastructure-envoy-gateway-default  sectionName: default |
 | image.pullPolicy | string | `"IfNotPresent"` |  |
 | image.repository | string | `"cryptpad/cryptpad"` |  |
 | image.tag | string | `"version-5.7.0"` |  |
@@ -103,8 +101,8 @@ application_config:
 | ingress.annotations | object | `{}` |  |
 | ingress.className | string | `""` |  |
 | ingress.enabled | bool | `false` |  |
-| ingress.hosts[0].host | string | `"localhost"` |  |
 | ingress.tls | list | `[]` |  |
+| mainDomain | string | `""` | Primary hostname for CryptPad (no scheme). Used for httpUnsafeOrigin, CPAD_MAIN_DOMAIN, and ingress/httpRoute host rules. Example: cryptpad.example.org |
 | nameOverride | string | `""` |  |
 | nodeSelector | object | `{}` | Values for the Node Selector |
 | persistence.cryptpad.blob.accessModes[0] | string | `"ReadWriteOnce"` |  |
@@ -169,6 +167,7 @@ application_config:
 | replicaCount | int | `1` | Number of replicas |
 | resources | object | `{}` | Specify default resources. We usually recommend not to specify default resources and to leave this as a conscious choice for the user. This also increases chances charts run on environments with little resources, such as Minikube. |
 | restrictRegistration | bool | `false` | Restrict registration to only users with admin keys |
+| sandboxDomain | string | `""` | Sandbox hostname for CryptPad security isolation (no scheme). Used for httpSafeOrigin and CPAD_SANDBOX_DOMAIN. Must be a *different* domain or subdomain from mainDomain. If empty, mainDomain is reused (insecure). Example: sandbox.cryptpad.example.org |
 | securityContext | object | `{}` | Security context |
 | service.containerPort | int | `3000` |  |
 | service.externalIPs | list | `[]` |  |
