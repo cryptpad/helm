@@ -263,6 +263,9 @@ deployment: {}
 # -- Values for the Affinity
 affinity: {}
 
+# -- Name for the Priority Class
+priorityClassName: ""
+
 persistence:
   # -- Enable the persistence
   enabled: true
