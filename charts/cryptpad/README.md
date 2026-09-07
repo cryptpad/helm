@@ -140,6 +140,7 @@ application_config:
 | persistence.enabled | bool | `true` | Enable the persistence |
 | podAnnotations | object | `{}` | Annotations for the Pod |
 | podSecurityContext | object | `{"fsGroup":4001}` | Security context for the Pod |
+| priorityClassName | string | `""` | Name for the Priority Class |
 | probes.liveness.enabled | bool | `true` | Enable liveness probe |
 | probes.liveness.failureThreshold | int | `5` | Failure threshold for liveness probe |
 | probes.liveness.httpGet.enabled | bool | `true` | If enabled uses httpGet to check, if false uses tcpSocket checking. |
