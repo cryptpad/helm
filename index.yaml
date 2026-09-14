@@ -2,6 +2,28 @@ apiVersion: v1
 entries:
   cryptpad:
   - apiVersion: v2
+    created: "2026-09-14T09:35:13.089845242Z"
+    description: CryptPad is a collaboration office suite that is end-to-end-encrypted
+      and open-source.
+    digest: 01b12e04ea68880ad01ebade3f38698ecd1163e25202d20aeac6bd75a013ac3f
+    home: https://cryptpad.org
+    icon: https://cryptpad.org/images/CryptPad_logo_text.svg
+    keywords:
+    - cryptpad
+    - open office
+    - storage
+    - end2end
+    maintainers:
+    - email: guilherme.sautner@xwiki.com
+      name: Guilherme Sautner
+    - email: arsene.fougerouse@xwiki.com
+      name: Arsène Fougerouse
+    name: cryptpad
+    type: application
+    urls:
+    - https://github.com/cryptpad/helm/releases/download/cryptpad-helm-0.1.0/cryptpad-0.1.0.tgz
+    version: 0.1.0
+  - apiVersion: v2
     created: "2026-09-07T15:09:57.750193355Z"
     description: CryptPad is a collaboration office suite that is end-to-end-encrypted
       and open-source.
@@ -699,4 +721,4 @@ entries:
     urls:
     - https://github.com/cryptpad/helm/releases/download/cryptpad-helm-0.0.6/cryptpad-0.0.6.tgz
     version: 0.0.6
-generated: "2026-09-07T15:09:57.750569516Z"
+generated: "2026-09-14T09:35:13.090143007Z"
