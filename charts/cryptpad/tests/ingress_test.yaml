@@ -10,13 +10,9 @@ tests:
       service.externalPort: 80
       service.internalPort: 8080
       service.name: tcp
+      mainDomain: localhost
       ingress:
         enabled: true
-        hosts:
-        - host: localhost
-          paths:
-            - path: /
-              pathType: ImplementationSpecific
     release:
       name: release
     asserts:
@@ -28,4 +24,26 @@ tests:
           value: release-cryptpad
       - matchSnapshot:
           path: spec
+        template: ingress.yaml
+  - it: should expose a single catch-all path per host (websocket rides the main rule since 2026.10)
+    set:
+      ingress.enabled: true
+      mainDomain: cryptpad.example.org
+      sandboxDomain: sandbox.cryptpad.example.org
+    asserts:
+      - lengthEqual:
+          path: spec.rules[0].http.paths
+          count: 1
+        template: ingress.yaml
+      - equal:
+          path: spec.rules[0].http.paths[0].path
+          value: /
+        template: ingress.yaml
+      - lengthEqual:
+          path: spec.rules[1].http.paths
+          count: 1
+        template: ingress.yaml
+      - equal:
+          path: spec.rules[1].host
+          value: sandbox.cryptpad.example.org
         template: ingress.yaml

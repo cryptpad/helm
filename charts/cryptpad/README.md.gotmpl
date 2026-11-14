@@ -57,6 +57,51 @@ application_config:
 
 {{ template "chart.valuesSection" . }}
 
+## Upgrading to 0.2.0 / CryptPad 2026.10 notes
+
+This chart version targets **CryptPad 2026.10.x** (new server architecture). Compared to
+older chart versions, the following **breaking values changes** apply:
+
+* **`mainDomain` / `sandboxDomain`** are the single source of truth for the instance
+  origins (config.js `httpUnsafeOrigin`/`httpSafeOrigin`, infra.js `public.origin`/
+  `public.sandboxOrigin`), the ingress/httpRoute host rules, and the TLS hosts.
+  The legacy `config.httpUnsafeOrigin` / `config.httpSafeOrigin` keys are no longer used.
+* **`infra`** (new, required with the 2026.10+ image): rendered into `/cryptpad/config/infra.js`.
+  `infra.front`, `infra.core` and `infra.storage` are all **mandatory** (the new server
+  requires at least one node of each — a single `{host, port}` entry per type is fine for
+  a single-container deployment; the HTTP node proxies `/api` requests and websocket
+  upgrades to the front nodes). Since 2026.10 the HTTP server also serves
+  `/cryptpad_websocket` on the main port — **there is no separate websocket port or route
+  anymore**: `service.websocket`, the second container port (3003) and the service port 83
+  were removed, and the dedicated `/cryptpad_websocket` ingress/HTTPRoute path rules were
+  dropped (realtime traffic is covered by the catch-all `/` rule). If your ingress
+  controller needs special proxy timeouts for long-lived websocket connections, apply
+  them via `ingress.annotations`.
+* **`office.enabled`** (new, default `false`): the image does not bundle the office suite
+  (EuroOffice). Set it to `true` to install at container start via `install-office.sh`
+  (env `CPAD_INSTALL_OFFICE=yes`). This adds startup time — consider raising
+  `probes.startup.failureThreshold`.
+* **`extraConfigFiles`** (new): additional config files rendered verbatim into the
+  ConfigMap and mounted in `/cryptpad/config` — e.g. `sso.js` for the
+  [SSO plugin](https://github.com/cryptpad/sso) (use plugin version >= 1.0.0 with
+  CryptPad 2026.10+; the `cryptpad-sodium-plugin` is no longer needed):
+  ```yaml
+  extraConfigFiles:
+    sso.js: |
+      module.exports = {
+        ...
+      };
+  ```
+* **`config` values are JSON-serialized**: use plain numbers/strings/booleans/lists/maps
+  only — no JavaScript expressions or comments. `config.maxUploadSize` must be a plain
+  number (e.g. `20971520`), and `config.httpAddress` was removed (use
+  `infra.public.httpHost`).
+* **`cpadConfig`** was removed: the generated ConfigMap is mounted as a whole at the
+  hardcoded `/cryptpad/config` (and `application_config.js` still goes to
+  `/cryptpad/customize/application_config.js`).
+
+After deploying, review the instance's `/checkup/` page to ensure all tests pass.
+
 ## Backup
 
 Important volumes or paths (in case different solution like empty/sidecar backup tools) to be considered:

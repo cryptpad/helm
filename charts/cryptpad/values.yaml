@@ -5,12 +5,14 @@
 # -- Number of replicas
 replicaCount: 1
 
-# -- Primary hostname for CryptPad (no scheme). Used for httpUnsafeOrigin, CPAD_MAIN_DOMAIN,
+# -- Primary hostname for CryptPad (no scheme). Single source of truth for the instance
+# origins (config.js httpUnsafeOrigin / infra.js public.origin), CPAD_MAIN_DOMAIN,
 # and ingress/httpRoute host rules. Example: cryptpad.example.org
 mainDomain: ""
 
-# -- Sandbox hostname for CryptPad security isolation (no scheme). Used for httpSafeOrigin and
-# CPAD_SANDBOX_DOMAIN. Must be a *different* domain or subdomain from mainDomain.
+# -- Sandbox hostname for CryptPad security isolation (no scheme). Used for the sandbox
+# origin (config.js httpSafeOrigin / infra.js public.sandboxOrigin), CPAD_SANDBOX_DOMAIN,
+# and ingress/httpRoute host rules. Must be a *different* domain or subdomain from mainDomain.
 # If empty, mainDomain is reused (insecure). Example: sandbox.cryptpad.example.org
 sandboxDomain: ""
 
@@ -21,13 +23,19 @@ workloadStateful: true
 image:
   pullPolicy: IfNotPresent
   repository: cryptpad/cryptpad
-  tag: "version-5.7.0"
+  tag: "version-2026.10.1"
   # repository: git.xwikisas.com:5050/xwiki-cloud-infrastructure/docker-images/cryptpad
   # tag: "latest"
 
+office:
+  # -- Install the office suite (EuroOffice, based on OnlyOffice) at container start via
+  # install-office.sh. Required for the office apps with the 2026.10+ images — the image
+  # does not bundle it. Adds startup time; consider raising probes.startup.failureThreshold.
+  enabled: false
+
 # -- Configuration of the [application](https://docs.cryptpad.org/en/admin_guide/customization.html#application-config)
 application_config:
-  # Check all the configurable values: https://github.com/xwiki-labs/cryptpad/blob/main/www/common/application_config_internal.js
+  # Check all the configurable values: https://github.com/cryptpad/cryptpad/blob/main/www/common/application_config_internal.js
   # availableLanguages: [ 'en', 'fr', 'de' ]
   # privacy: |
   #  {
@@ -37,29 +45,14 @@ application_config:
   #    "de": 'https://example.com/privacy.de.html', // you get the idea?
   #  }
 
-# -- File to mount for the CPAD Configuration (`CPAD_CONF`)
-cpadConfig: "/cryptpad/config/config.js"
-
+# All `config` values are JSON-serialized into config.js: use plain numbers, strings,
+# booleans, lists and maps — no JavaScript expressions or comments.
+# Origins (httpUnsafeOrigin / httpSafeOrigin) are derived from mainDomain/sandboxDomain
+# and cannot be set here.
 # https://docs.cryptpad.org/en/admin_guide/installation.html#admin-cryptpad-config
-# [Configuration of Cryptpad](https://docs.cryptpad.org/en/admin_guide/installation.html#admin-cryptpad-config)
 config:
-  #########################
-  # NETWORK CONFIGURATION #
-  #########################
-  # -- httpAddress specifies the address on which the nodejs server should be accessible.
-  httpAddress: '0.0.0.0'
-
-  # if you do not enable the ingress, set this to your URL
-  # otherwise the hostname from the ingress will be used
-  # -- URL to reach your cryptpad
-  # httpUnsafeOrigin: 'https://cryptpad.example.org'
-
-  # if you do not enable the ingress, set this to your URL
-  # otherwise the hostname from the ingress will be used
-  # -- URL to reach your cryptpad
-  # httpSafeOrigin: 'https://cryptpad.example.org'
-
-  maxUploadSize: 20 * 1024 * 1024
+  # -- Maximum upload size in bytes.
+  maxUploadSize: 20971520
 
   ####################
   # Database Volumes #
@@ -106,6 +99,41 @@ config:
   #   "[cryptpad-user1@my.awesome.website/YZgXQxKR0Rcb6r6CmxHPdAGLVludrAF2lEnkbx1vVOo=]",
   # ]
 
+# -- Infra configuration for the new CryptPad server (2026.10+), serialized into infra.js.
+# `public.origin` / `public.sandboxOrigin` are always derived from mainDomain/sandboxDomain
+# (same source as the ingress/httpRoute host rules) and cannot be set here.
+# Schema reference: https://github.com/cryptpad/cryptpad/blob/main/config/infra.example.js
+infra:
+  public:
+    # -- Address of the nodejs HTTP server inside the container.
+    httpHost: "0.0.0.0"
+    # -- Port of the nodejs HTTP server inside the container. Serves the client app and
+    # proxies /api requests and websocket upgrades to the `front` nodes (there is no
+    # separate websocket port since CryptPad 2026.10). Also serves the sandbox origin
+    # when no separate sandbox listener is configured.
+    httpPort: 3000
+    # -- Sandbox listener port. Leave unset behind a reverse proxy/ingress: the sandbox
+    # origin is then served on the main port (httpPort). Set it only for local-dev-style
+    # setups without a proxy, where the sandbox needs its own listener (upstream
+    # example: 3001). Must differ from httpPort when set.
+    # httpSafePort: 3001
+  # -- Front nodes are MANDATORY: the HTTP node proxies /api requests and websocket
+  # upgrades to them. One entry is enough for a single-container deployment.
+  front:
+    - host: "localhost"
+      port: 3010
+  # -- Core nodes are MANDATORY: internal websocket between all
+  # nodes. One entry is enough for a single-container deployment.
+  core:
+    - host: "localhost"
+      port: 3020
+  # -- Storage nodes are MANDATORY: they serve blob/block/datastore channels.
+  # One entry is enough for a single-container deployment.
+  storage:
+    - host: "localhost"
+      port: 3030
+      wsPort: 3040
+
 # -- Allow documents and media be embedded on other websites. This will add an "Embed" option on the Share menu.
 enableEmbedding: false
 # -- Restrict registration to only users with admin keys
@@ -116,6 +144,7 @@ restrictRegistration: false
 extraInitContainers: []
   # - name: install-sso-plugin
   #   image: alpine/git:2.45.2
+  #   # SSO plugin >= 1.0.0 is required for CryptPad 2026.10+
   #   command: ['sh', '-c', 'git clone --depth=1 https://github.com/cryptpad/sso /plugins/sso']
   #   volumeMounts:
   #     - name: sso-plugin
@@ -128,18 +157,21 @@ extraContainers: []
 extraVolumes: []
   # - name: sso-plugin
   #   emptyDir: {}
-  # - name: sso-config
-  #   secret:
-  #     secretName: cryptpad-sso
 
 # -- Additional volume mounts for the main container.
 extraVolumeMounts: []
   # - name: sso-plugin
   #   mountPath: /cryptpad/lib/plugins/sso
   #   subPath: sso
-  # - name: sso-config
-  #   mountPath: /cryptpad/config/sso.js
-  #   subPath: sso.js
+
+# -- Additional config files rendered verbatim into the ConfigMap and mounted in
+# /cryptpad/config (e.g. `sso.js` for the SSO plugin). Keys are file names, values are
+# file contents (plain text). Reserved names: config.js, infra.js, application_config.js.
+extraConfigFiles: {}
+  # sso.js: |
+  #   module.exports = {
+  #     ...
+  #   };
 
 # -- Additional environment variables for the main container (raw env entries, supports valueFrom).
 extraEnv: []
@@ -186,10 +218,6 @@ service:
   externalPort: 80
   internalPort: http
   containerPort: 3000
-  websocket:
-    externalPort: 83
-    internalPort: ws
-    containerPort: 3003
   # Set an array of externalIPs for the service
   externalIPs: []
     # - 10.20.30.40

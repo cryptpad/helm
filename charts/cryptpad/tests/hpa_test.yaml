@@ -20,9 +20,9 @@ tests:
           path: spec.maxReplicas
           value: 100
       - equal:
-          path: spec.metrics[0].resource.targetAverageUtilization
+          path: spec.metrics[0].resource.target.averageUtilization
           value: 80
       - equal:
-          path: spec.metrics[1].resource.targetAverageUtilization
+          path: spec.metrics[1].resource.target.averageUtilization
           value: 75
           

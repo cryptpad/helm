@@ -87,16 +87,17 @@ spec:
             - name: CPAD_SANDBOX_DOMAIN
               value: "{{ include "cryptpad-helm.sandboxDomain" . | trim }}"
             - name: CPAD_CONF
-              value: "{{ .Values.cpadConfig }}"
+              value: "/cryptpad/config/config.js"
+            {{- if .Values.office.enabled }}
+            - name: CPAD_INSTALL_OFFICE
+              value: "yes"
+            {{- end }}
             {{- with .Values.extraEnv }}
               {{- toYaml . | nindent 12 }}
             {{- end }}
           ports:
             - name: {{ .Values.service.internalPort }}
               containerPort: {{ .Values.service.containerPort }}
-              protocol: TCP
-            - name: {{ .Values.service.websocket.internalPort }}
-              containerPort: {{ .Values.service.websocket.containerPort }}
               protocol: TCP
         {{- if .Values.probes.startup.enabled }}
           startupProbe:
@@ -161,8 +162,7 @@ spec:
             {{- end }}
           {{- end }}
             - name: configmaps
-              mountPath: {{ .Values.cpadConfig }}
-              subPath: config.js
+              mountPath: /cryptpad/config
             - name: configmaps
               mountPath: /cryptpad/customize/application_config.js
               subPath: application_config.js

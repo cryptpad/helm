@@ -62,29 +62,25 @@ Create the name of the service account to use
 {{- end }}
 
 {{/*
-Define main domain (httpUnsafeOrigin / CPAD_MAIN_DOMAIN).
+Define main domain (httpUnsafeOrigin / infra public.origin / CPAD_MAIN_DOMAIN).
 */}}
 {{- define "cryptpad-helm.mainDomain" -}}
 {{- if .Values.mainDomain }}
-https://{{ .Values.mainDomain }}
-{{- else if .Values.config.httpUnsafeOrigin }}
-{{- .Values.config.httpUnsafeOrigin }}
+https://{{ .Values.mainDomain | trimSuffix "/" }}
 {{- else }}
 http://localhost:3000
 {{- end }}
 {{- end }}
 
 {{/*
-Define sandbox domain (httpSafeOrigin / CPAD_SANDBOX_DOMAIN).
+Define sandbox domain (httpSafeOrigin / infra public.sandboxOrigin / CPAD_SANDBOX_DOMAIN).
 Falls back to mainDomain when sandboxDomain is unset (insecure — same origin).
 */}}
 {{- define "cryptpad-helm.sandboxDomain" -}}
 {{- if .Values.sandboxDomain }}
-https://{{ .Values.sandboxDomain }}
+https://{{ .Values.sandboxDomain | trimSuffix "/" }}
 {{- else if .Values.mainDomain }}
-https://{{ .Values.mainDomain }}
-{{- else if .Values.config.httpSafeOrigin }}
-{{- .Values.config.httpSafeOrigin }}
+https://{{ .Values.mainDomain | trimSuffix "/" }}
 {{- else }}
 http://localhost:3000
 {{- end }}
