@@ -1,6 +1,6 @@
 suite: test configmap
-templates: 
-- configmap.yaml
+templates:
+  - configmap.yaml
 tests:
   - it: should declare module and exports in config
     asserts:
@@ -9,38 +9,135 @@ tests:
           pattern: globals module \*\/
       - matchRegex:
           path: data["config.js"]
-          pattern: module\.exports = {
-  - it: should contains value specified in config
+          pattern: module\.exports = +\{
+  - it: should render config values as pretty JSON
     set:
       config:
-        filePath: 'files'
-        archivePath: '"archives"'
-        pinPath: '"pins"'
-    asserts: 
-      - matchRegex:
-          path: data["config.js"]
-          pattern: 'filePath: "files"'
-      - matchRegex:
-          path: data["config.js"]
-          pattern: 'filePath: "files"'
-      - matchRegex:
-          path: data["config.js"]
-          pattern: 'filePath: "files"'
-  - it: should define properly the AdminKeys and http values
-    set:
-      config:
-        httpSafeOrigin: "https://example.com"
-        httpUnsafeOrigin: "http://localhost:8080"
-        adminKeys: [
-          "[cryptpad-user1@my.awesome.website/YZgXQxKR0Rcb6r6CmxHPdAGLVludrAF2lEnkbx1vVOo=]",
-        ]
+        filePath: files
+        verbose: true
+        maxUploadSize: 4096
+        adminKeys:
+          - "[cryptpad-user1@my.awesome.website/YZgXQxKR0Rcb6r6CmxHPdAGLVludrAF2lEnkbx1vVOo=]"
     asserts:
       - matchRegex:
           path: data["config.js"]
-          pattern: 'httpSafeOrigin: "https:\/\/example\.com"'
+          pattern: '"filePath": "files"'
       - matchRegex:
           path: data["config.js"]
-          pattern: 'httpUnsafeOrigin: "http:\/\/localhost:8080"'
+          pattern: '"verbose": true'
+      - matchRegex:
+          path: data["config.js"]
+          pattern: '"maxUploadSize": 4096'
+      - matchRegex:
+          path: data["config.js"]
+          pattern: '"adminKeys": \['
+      - matchRegex:
+          path: data["config.js"]
+          pattern: 'YZgXQxKR0Rcb6r6CmxHPdAGLVludrAF2lEnkbx1vVOo='
+  - it: should derive origins from mainDomain/sandboxDomain for config.js and infra.js
+    set:
+      mainDomain: cryptpad.example.org
+      sandboxDomain: sandbox.cryptpad.example.org
+    asserts:
+      - matchRegex:
+          path: data["config.js"]
+          pattern: '"httpUnsafeOrigin": "https://cryptpad\.example\.org"'
+      - matchRegex:
+          path: data["config.js"]
+          pattern: '"httpSafeOrigin": "https://sandbox\.cryptpad\.example\.org"'
+      - matchRegex:
+          path: data["infra.js"]
+          pattern: '"origin": "https://cryptpad\.example\.org"'
+      - matchRegex:
+          path: data["infra.js"]
+          pattern: '"sandboxOrigin": "https://sandbox\.cryptpad\.example\.org"'
+      - matchRegex:
+          path: data["infra.js"]
+          pattern: '"httpHost": "0\.0\.0\.0"'
+      - matchRegex:
+          path: data["infra.js"]
+          pattern: '"httpPort": 3000'
+      - notMatchRegex:
+          path: data["infra.js"]
+          pattern: '"httpSafePort"'
+  - it: should render infra.public.httpSafePort when explicitly set
+    set:
+      infra:
+        public:
+          httpSafePort: 3001
+    asserts:
+      - matchRegex:
+          path: data["infra.js"]
+          pattern: '"httpSafePort": 3001'
+  - it: should include default front, core and storage nodes (all mandatory for the new server)
+    asserts:
+      - matchRegex:
+          path: data["infra.js"]
+          pattern: '"front": \[\s*\{\s*"host": "localhost",\s*"port": 3010\s*\}\s*\]'
+      - matchRegex:
+          path: data["infra.js"]
+          pattern: '"core": \[\s*\{\s*"host": "localhost",\s*"port": 3020\s*\}\s*\]'
+      - matchRegex:
+          path: data["infra.js"]
+          pattern: '"storage": \[\s*\{\s*"host": "localhost",\s*"port": 3030,\s*"wsPort": 3040\s*\}\s*\]'
+  - it: should fall back to mainDomain for the sandbox origin
+    set:
+      mainDomain: cryptpad.example.org
+    asserts:
+      - matchRegex:
+          path: data["infra.js"]
+          pattern: '"sandboxOrigin": "https://cryptpad\.example\.org"'
+      - matchRegex:
+          path: data["config.js"]
+          pattern: '"httpSafeOrigin": "https://cryptpad\.example\.org"'
+  - it: should fall back to localhost when no domain is set
+    asserts:
+      - matchRegex:
+          path: data["config.js"]
+          pattern: '"httpUnsafeOrigin": "http://localhost:3000"'
+      - matchRegex:
+          path: data["infra.js"]
+          pattern: '"origin": "http://localhost:3000"'
+  - it: should trim trailing slashes from domains
+    set:
+      mainDomain: cryptpad.example.org/
+    asserts:
+      - matchRegex:
+          path: data["infra.js"]
+          pattern: '"origin": "https://cryptpad\.example\.org"'
+      - notMatchRegex:
+          path: data["infra.js"]
+          pattern: 'example\.org/"'
+  - it: should ignore legacy config origin keys (origins come from domains only)
+    set:
+      config:
+        httpUnsafeOrigin: "https://legacy.example.org"
+    asserts:
+      - notMatchRegex:
+          path: data["config.js"]
+          pattern: 'legacy\.example\.org'
+      - notMatchRegex:
+          path: data["infra.js"]
+          pattern: 'legacy\.example\.org'
+  - it: should pass through extra infra.public keys and topology lists
+    set:
+      infra:
+        public:
+          fileHost: "https://files.example.org"
+          externalWebsocketURL: "wss://ws.example.org"
+        front:
+          - host: localhost
+            port: 3010
+    asserts:
+      - matchRegex:
+          path: data["infra.js"]
+          pattern: '"fileHost": "https://files\.example\.org"'
+      - matchRegex:
+          path: data["infra.js"]
+          pattern: '"externalWebsocketURL": "wss://ws\.example\.org"'
+      - matchRegex:
+          path: data["infra.js"]
+          pattern: '"front": \['
   - it: should contains basic keywords in Application config
     asserts:
       - matchRegex:
@@ -54,4 +151,24 @@ tests:
       - matchRegex:
           path: data["application_config.js"]
           pattern: AppConfig.availableLanguages =  \["en","fr","de"\];
-
+  - it: should render extraConfigFiles verbatim
+    set:
+      extraConfigFiles:
+        sso.js: |
+          module.exports = {
+            provider: "oidc"
+          };
+    asserts:
+      - matchRegex:
+          path: data["sso.js"]
+          pattern: 'module\.exports = \{'
+      - matchRegex:
+          path: data["sso.js"]
+          pattern: 'provider: "oidc"'
+  - it: should fail on reserved extraConfigFiles names
+    set:
+      extraConfigFiles:
+        config.js: "nope"
+    asserts:
+      - failedTemplate:
+          errorMessage: 'extraConfigFiles key "config.js" collides with a file generated by this chart'

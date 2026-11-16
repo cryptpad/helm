@@ -3,32 +3,72 @@ templates:
   - templates/cryptpad.yaml
   - templates/configmap.yaml
 tests:
-  - it: should have the good values
-    set:
-      cryptpad: 
-        replicaCount: 3
-      autoscaling:
-        enabled: false
-      config:
-        httpSafeOrigin: "https://example.com"
-        httpUnsafeOrigin: "localhost:3001"
+  - it: should render a StatefulSet by default
     asserts:
       - isKind:
           of: StatefulSet
         template: templates/cryptpad.yaml
-# Prevent requirement of always change snapshots when other improvements/changes are made. 
-#      - matchSnapshot:
-#          path: spec
-#        template: templates/cryptpad.yaml
-  - it: test the Deployement
+  - it: should render a Deployment when workloadStateful is false
     set:
       workloadStateful: false
     asserts:
       - isKind:
           of: Deployment
         template: templates/cryptpad.yaml
-# Prevent requirement of always change snapshots when other improvements/changes are made. 
-# Or check to ignore checksum from configmap from annotations 
-#      - matchSnapshot:
-#          path: spec
-#        template: templates/cryptpad.yaml
+  - it: should mount the whole config directory and the application_config override
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: configmaps
+            mountPath: /cryptpad/config
+        template: templates/cryptpad.yaml
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: configmaps
+            mountPath: /cryptpad/customize/application_config.js
+            subPath: application_config.js
+        template: templates/cryptpad.yaml
+  - it: should expose a single container port (websocket is served on the main port since 2026.10)
+    asserts:
+      - lengthEqual:
+          path: spec.template.spec.containers[0].ports
+          count: 1
+        template: templates/cryptpad.yaml
+      - equal:
+          path: spec.template.spec.containers[0].ports[0].containerPort
+          value: 3000
+        template: templates/cryptpad.yaml
+  - it: should configure the CPAD environment variables
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CPAD_CONF
+            value: /cryptpad/config/config.js
+        template: templates/cryptpad.yaml
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CPAD_MAIN_DOMAIN
+            value: http://localhost:3000
+        template: templates/cryptpad.yaml
+  - it: should not install the office suite by default
+    asserts:
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CPAD_INSTALL_OFFICE
+            value: "yes"
+        template: templates/cryptpad.yaml
+  - it: should set CPAD_INSTALL_OFFICE when office.enabled is true
+    set:
+      office.enabled: true
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CPAD_INSTALL_OFFICE
+            value: "yes"
+        template: templates/cryptpad.yaml

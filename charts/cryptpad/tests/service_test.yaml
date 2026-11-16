@@ -15,6 +15,13 @@ tests:
       - matchSnapshot:
           path: spec
 #        template: service.yaml
+  - it: should expose a single port (websocket is served on the main port since 2026.10)
+    release:
+      name: release
+    asserts:
+      - lengthEqual:
+          path: spec.ports
+          count: 1
   - it: should have same labels as Deployment
     set:
       service.type: ClusterIP
